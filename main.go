@@ -25,7 +25,7 @@ func main() {
 	}
 
 	//Set up handlers
-	dm.HandleFunc("/", handler.Page)
+	dm.HandleFunc("/", handler.Root)
 
 	fmt.Println("server started on ", addr)
 	err := srv.ListenAndServe()
