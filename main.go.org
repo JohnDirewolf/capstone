@@ -1,0 +1,55 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"time"
+
+	"github.com/JohnDirewolf/capstone/database"
+	"github.com/JohnDirewolf/capstone/handler"
+)
+
+func main() {
+	//set up database.
+	err := database.Init()
+	if err != nil {
+		log.Println("Error reported from Database.")
+		return
+	}
+	log.Println("Database connected")
+
+	err = database.InsertTest(1, "Boots")
+	if err != nil {
+		log.Println("Error reported from Database.")
+		return
+	}
+
+	//Currently the address is const, later will be environmental variable.
+	const addr = ":8080"
+
+	//Creating new servemux "dm" which is a nod to Dungeon Master.
+	dm := http.NewServeMux()
+
+	//Set up our server
+	srv := http.Server{
+		Handler:      dm,
+		Addr:         addr,
+		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  30 * time.Second,
+	}
+
+	//Basic file servering for css stylesheets
+	//log.Println("Serving static files from ", http.Dir("./static/css"))
+	dm.Handle("/static/css/", http.StripPrefix("/static/css/", http.FileServer(http.Dir("./static/css"))))
+
+	//Set up page handlers
+	dm.HandleFunc("/", handler.Root)
+
+	fmt.Println("server started on ", addr)
+	err = srv.ListenAndServe()
+	log.Fatal(err)
+
+	err = database.Close()
+	log.Fatal(err)
+}

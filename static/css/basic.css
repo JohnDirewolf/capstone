@@ -1,0 +1,195 @@
+body {
+  background-color: black;
+}
+
+h1 {
+  color: red;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: x-large;
+  text-align: center;
+}
+
+h1.move {
+  position: absolute;
+  top: 600px;
+  left: 1020px;
+  color: red;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: x-large;
+  text-align: center;
+}
+
+h2 {
+  color: blue;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: large;
+  text-align: center;
+}
+
+p {
+  color: white;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: medium;
+  text-align: center;
+}
+
+a:link {
+  outline-color: white;
+  color: green;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: large;
+  text-align: center;
+}
+
+a:visited {
+  outline-color: white;
+  color: green;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: large;
+  text-align: center;
+}
+
+.main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1570px;
+  height: 820px;
+}
+
+.compass {
+  position:absolute;
+  top: 0px;
+  left: 1020px;
+  width: 550px;
+  height: 550px;
+  background-color: black;
+}
+
+.maze {
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background-color: black;
+  border-top: 10px solid grey;
+  border-bottom: 10px solid darkgrey;
+  border-left: 10px solid grey;
+  border-right: 10px solid darkgrey;
+}
+
+/*room classes, each image is in a div container that places it properly within the maze container*/
+.room0 {
+  position: absolute;
+  top: 600px;
+  left: 0px;
+  text-align: center;
+}
+
+.room1 {
+  position: absolute;
+  top: 600px;
+  left: 200px;
+  text-align: center;
+}
+
+.room2 {
+  position: absolute;
+  top: 600px;
+  left: 400px;
+  text-align: center;
+}
+
+.room3 {
+  position: absolute;
+  top: 600px;
+  left: 600px;
+  text-align: center;
+}
+
+.room4 {
+  position: absolute;
+  top: 400px;
+  left: 0px;
+  text-align: center;
+}
+
+.room5 {
+  position: absolute;
+  top: 400px;
+  left: 200px;
+  text-align: center;
+}
+
+.room6 {
+  position: absolute;
+  top: 400px;
+  left: 400px;
+  text-align: center;
+}
+
+.room7 {
+  position: absolute;
+  top: 400px;
+  left: 600px;
+  text-align: center;
+}
+
+.room8 {
+  position: absolute;
+  top: 200px;
+  left: 0px;
+  text-align: center;
+}
+
+.room9 {
+  position: absolute;
+  top: 200px;
+  left: 200px;
+  text-align: center;
+}
+
+.room10 {
+  position: absolute;
+  top: 200px;
+  left: 400px;
+  text-align: center;
+}
+
+.room11 {
+  position: absolute;
+  top: 200px;
+  left: 600px;
+  text-align: center;
+}
+
+.room12 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  text-align: center;
+}
+
+.room13 {
+  position: absolute;
+  top: 0px;
+  left: 200px;
+  text-align: center;
+}
+
+.room14 {
+  position: absolute;
+  top: 0px;
+  left: 400px;
+  text-align: center;
+}
+
+.room15 {
+  position: absolute;
+  top: 0px;
+  left: 600px;
+  text-align: center;
+}

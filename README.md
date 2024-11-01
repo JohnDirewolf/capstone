@@ -4,6 +4,5 @@
 This is a fantasy web based game. It is the Capstone Project for the Boot.dev developers course.
 
 ## Features
-* Server
-* Postgres
-* HTML
+* Postgres go get github.com/lib/pq
+    go: added github.com/lib/pq v1.10.9

@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head></head>
-<body>
-	<p> Yay Capstone Project!</p> 
-	<p>I'm your DM, a servemux running on a Go server. </p>
-    <p>Updating the index.html as the server is running.</p>
-</body>
-</html>
+<!-- index.html -->
+{{define "body"}}
+	<h1>Boot.dev Capstone Project!</h1> 
+	<h2>Maze Runner!</h2>
+    <p>
+		You will attempt to solve a maze by clicking on directions to move.<br /> 
+		As you move the maze will be revealed.
+	</p>
+	<p><a href="/app?action=start">Start!</a></p>
+{{end}}
