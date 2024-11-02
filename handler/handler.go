@@ -10,8 +10,9 @@ import (
 
 // STRUCTURES
 type pageData struct {
-	Title string
-	Rooms template.HTML
+	Title   string
+	Rooms   template.HTML
+	Compass template.HTML
 }
 
 type roomData struct {
@@ -155,7 +156,7 @@ func mazeInit() {
 	theMaze[15] = room
 }
 
-func generateKnownMap() string {
+func generateKnownMap() template.HTML {
 	//This runs through the map and all rooms showing discovered have their container added to the string.
 	var knownMap strings.Builder
 	for i := 0; i < 16; i++ {
@@ -163,7 +164,37 @@ func generateKnownMap() string {
 			fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.png' alt='Maze Room' width='200' height='200' /></div>\n", i, i)
 		}
 	}
-	return knownMap.String()
+	//Add the Player
+	playerLocationTop := ((15 - playerLocation) / 4) * 200
+	playerLocationLeft := (playerLocation % 4) * 200
+	//log.Printf("playerLocationLeft: %d", playerLocationLeft)
+	fmt.Fprintf(&knownMap, "<div style='position:absolute;top:%dpx;left:%dpx'><img src='/assets/images/player.png' alt='Player!' width='200' height='200' /></div>\n", playerLocationTop, playerLocationLeft)
+	return template.HTML(knownMap.String())
+}
+
+func generateCompass() template.HTML {
+	var compass strings.Builder
+	if theMaze[playerLocation].exitNorth {
+		fmt.Fprint(&compass, "<div class='n_arrow'><a href='/app?action=north'><img src='/assets/images/green_arrow_n.png' alt='Green Arrow North' width='150' height='200' /></a></div>\n")
+	} else {
+		fmt.Fprint(&compass, "<div class='n_arrow'><img src='/assets/images/red_arrow_n.png' alt='Red Arrow North' width='150' height='200' /></div>\n")
+	}
+	if theMaze[playerLocation].exitSouth {
+		fmt.Fprint(&compass, "<div class='s_arrow'><a href='/app?action=south'><img src='/assets/images/green_arrow_s.png' alt='Green Arrow South' width='150' height='200' /></a></div>\n")
+	} else {
+		fmt.Fprint(&compass, "<div class='s_arrow'><img src='/assets/images/red_arrow_s.png' alt='Red Arrow South' width='150' height='200' /></div>\n")
+	}
+	if theMaze[playerLocation].exitWest {
+		fmt.Fprint(&compass, "<div class='w_arrow'><a href='/app?action=west'><img src='/assets/images/green_arrow_w.png' alt='Green Arrow West' width='200' height='150' /></a></div>\n")
+	} else {
+		fmt.Fprint(&compass, "<div class='w_arrow'><img src='/assets/images/red_arrow_w.png' alt='Red Arrow West' width='200' height='150' /></div>\n")
+	}
+	if theMaze[playerLocation].exitEast {
+		fmt.Fprint(&compass, "<div class='e_arrow'><a href='/app?action=east'><img src='/assets/images/green_arrow_e.png' alt='Green Arrow East' width='200' height='150' /></a></div>\n")
+	} else {
+		fmt.Fprint(&compass, "<div class='e_arrow'><img src='/assets/images/red_arrow_e.png' alt='Red Arrow East' width='200' height='150' /></div>\n")
+	}
+	return template.HTML(compass.String())
 }
 
 // ACTIONS
@@ -174,8 +205,9 @@ func start(w http.ResponseWriter) {
 	playerLocation = 2
 
 	startPageData := pageData{
-		Title: "Maze Runner - Start!",
-		Rooms: template.HTML(generateKnownMap()),
+		Title:   "Maze Runner - Start!",
+		Rooms:   generateKnownMap(),
+		Compass: generateCompass(),
 	}
 
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
@@ -243,8 +275,9 @@ func move(direction string, w http.ResponseWriter) {
 	theMaze[playerLocation] = room
 
 	startPageData := pageData{
-		Title: "Maze Runner",
-		Rooms: template.HTML(generateKnownMap()),
+		Title:   "Maze Runner",
+		Rooms:   generateKnownMap(),
+		Compass: generateCompass(),
 	}
 
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
@@ -262,68 +295,3 @@ func move(direction string, w http.ResponseWriter) {
 		log.Printf("Handler, Game, move, Error executing page: %v", err)
 	}
 }
-
-/*
-func south(w http.ResponseWriter) {
-	startPageData := pageData{
-		Title: "Maze Runner South!",
-	}
-
-	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/south.html")
-	if err != nil {
-		log.Printf("Handler, Game, south, Error accessing HTML file: %v", err)
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500: Unable to find page."))
-		return
-	}
-
-	err = pageTemplate.Execute(w, startPageData)
-	if err != nil {
-		//Too late to do any real error handling, just log the error.
-		log.Printf("Handler, Game, south, Error executing page: %v", err)
-	}
-}
-
-func west(w http.ResponseWriter) {
-	startPageData := pageData{
-		Title: "Maze Runner West!",
-	}
-
-	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/west.html")
-	if err != nil {
-		log.Printf("Handler, Game, west, Error accessing HTML file: %v", err)
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500: Unable to find page."))
-		return
-	}
-
-	err = pageTemplate.Execute(w, startPageData)
-	if err != nil {
-		//Too late to do any real error handling, just log the error.
-		log.Printf("Handler, Game, west, Error executing page: %v", err)
-	}
-}
-
-func east(w http.ResponseWriter) {
-	startPageData := pageData{
-		Title: "Maze Runner East!",
-	}
-
-	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/east.html")
-	if err != nil {
-		log.Printf("Handler, Game, east, Error accessing HTML file: %v", err)
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500: Unable to find page."))
-		return
-	}
-
-	err = pageTemplate.Execute(w, startPageData)
-	if err != nil {
-		//Too late to do any real error handling, just log the error.
-		log.Printf("Handler, Game, east, Error executing page: %v", err)
-	}
-}
-*/

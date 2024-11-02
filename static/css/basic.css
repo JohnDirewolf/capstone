@@ -33,20 +33,31 @@ p {
   text-align: center;
 }
 
-a:link {
-  outline-color: white;
-  color: green;
+p.return {
+  position: absolute;
+  top: 173px;
+  left: 198px;
+  width: 150px;
+  height: 150px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: large;
-  text-align: center;
+  font-size: x-large;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  border-top: 3px solid blue;
+  border-bottom: 3px solid darkblue;
+  border-left: 3px solid blue;
+  border-right: 3px solid darkblue;
+}
+
+a:link {
+  color: green;
 }
 
 a:visited {
-  outline-color: white;
   color: green;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: large;
-  text-align: center;
 }
 
 .main {
@@ -58,15 +69,6 @@ a:visited {
   height: 820px;
 }
 
-.compass {
-  position:absolute;
-  top: 0px;
-  left: 1020px;
-  width: 550px;
-  height: 550px;
-  background-color: black;
-}
-
 .maze {
   position: absolute;
   top: 50%;
@@ -75,10 +77,10 @@ a:visited {
   width: 800px;
   height: 800px;
   background-color: black;
-  border-top: 10px solid grey;
-  border-bottom: 10px solid darkgrey;
-  border-left: 10px solid grey;
-  border-right: 10px solid darkgrey;
+  border-top: 10px solid darkgrey;
+  border-bottom: 10px solid grey;
+  border-left: 10px solid darkgrey;
+  border-right: 10px solid grey;
 }
 
 /*room classes, each image is in a div container that places it properly within the maze container*/
@@ -192,4 +194,50 @@ a:visited {
   top: 0px;
   left: 600px;
   text-align: center;
+}
+
+/* compass rose CSS */
+.compass {
+  position:absolute;
+  top: 0px;
+  left: 1020px;
+  width: 550px;
+  height: 550px;
+  background-color: black;
+}
+
+.n_arrow {
+  position:absolute;
+  top: 0px;
+  left: 200px;
+  width: 150px;
+  height: 200px;
+  background-color: black;
+}
+
+.s_arrow {
+  position:absolute;
+  top: 350px;
+  left: 200px;
+  width: 150px;
+  height: 200px;
+  background-color: black;
+}
+
+.w_arrow {
+  position:absolute;
+  top: 200px;
+  left: 0px;
+  width: 200px;
+  height: 150px;
+  background-color: black;
+}
+
+.e_arrow {
+  position:absolute;
+  top: 200px;
+  left: 350px;
+  width: 200px;
+  height: 150px;
+  background-color: black;
 }
