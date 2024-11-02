@@ -8,6 +8,7 @@ CREATE TABLE items (
 
 CREATE TABLE rooms (
     id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL DEFAULT 'Maze Runner!',
     description TEXT NOT NULL DEFAULT 'No Description Provided',
     doorNorth BOOLEAN NOT NULL DEFAULT false,
     doorNorthLocked BOOLEAN NOT NULL DEFAULT false,

@@ -19,12 +19,6 @@ func main() {
 	}
 	log.Println("Database connected")
 
-	err = database.InsertTest(1, "Boots")
-	if err != nil {
-		log.Println("Error reported from Database.")
-		return
-	}
-
 	//Currently the address is const, later will be environmental variable.
 	const addr = ":8080"
 
