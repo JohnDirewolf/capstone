@@ -10,22 +10,23 @@ CREATE TABLE rooms (
     id INTEGER PRIMARY KEY,
     title TEXT NOT NULL DEFAULT 'Maze Runner!',
     description TEXT NOT NULL DEFAULT 'No Description Provided',
+    discovered Boolean NOT NULL DEFAULT false,
     doorNorth BOOLEAN NOT NULL DEFAULT false,
     doorNorthLocked BOOLEAN NOT NULL DEFAULT false,
-    doorNorthKey INTEGER,  
+    doorNorthKey_id INTEGER,  
     doorSouth BOOLEAN NOT NULL DEFAULT false,
     doorSouthLocked BOOLEAN NOT NULL DEFAULT false,
-    doorSouthKey INTEGER, 
+    doorSouthKey_id INTEGER, 
     doorWest BOOLEAN NOT NULL DEFAULT false,
     doorWestLocked BOOLEAN NOT NULL DEFAULT false,
-    doorWestKey INTEGER, 
+    doorWestKey_id INTEGER, 
     doorEast BOOLEAN NOT NULL DEFAULT false,
     doorEastLocked BOOLEAN NOT NULL DEFAULT false,
-    doorEastKey INTEGER,
-    FOREIGN KEY (doorNorthKey) REFERENCES items(id),
-    FOREIGN KEY (doorSouthKey) REFERENCES items(id),
-    FOREIGN KEY (doorWestKey) REFERENCES items(id),
-    FOREIGN KEY (doorEastKey) REFERENCES items(id)
+    doorEastKey_id INTEGER,
+    FOREIGN KEY (doorNorthKey_id) REFERENCES items(id),
+    FOREIGN KEY (doorSouthKey_id) REFERENCES items(id),
+    FOREIGN KEY (doorWestKey_id) REFERENCES items(id),
+    FOREIGN KEY (doorEastKey_id) REFERENCES items(id)
 );
 
 -- +goose Down

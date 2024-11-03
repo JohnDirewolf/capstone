@@ -60,7 +60,7 @@ a:visited {
   color: green;
 }
 
-/* .main creates the game field in the middle of the user's screen*/
+/* .main creates the game field at 100x100 to match background grid */
 .main {
   position: absolute;
   top: 50%;
@@ -68,24 +68,19 @@ a:visited {
   transform: translate(-50%, -50%);
   width: 1570px;
   height: 820px;
+  background-repeat: repeat;
+  background-image: url("/assets/images/grid_paper.png");
+  background-position: 10px 10px
 }
 
-/* .maze creates the box that contains the maze itself.*/
+/* .maze creates the box that contains the maze itself. */
 .maze {
   position: absolute;
-  top: 50%;
-  left: 25%;
-  transform: translate(-50%, -50%);
+  top: 10px;
+  left: 10px;
   width: 800px;
   height: 800px;
-  background-color: black;
-  border-top: 10px solid darkgrey;
-  border-bottom: 10px solid grey;
-  border-left: 10px solid darkgrey;
-  border-right: 10px solid grey;
 }
-
-
 
 /*room classes, each image is in a div container that places it properly within the maze container*/
 .room0 {
@@ -203,11 +198,11 @@ a:visited {
 /* compass rose CSS */
 .compass {
   position:absolute;
-  top: 0px;
-  left: 1020px;
+  top: 10px;
+  left: 920px;
   width: 550px;
   height: 550px;
-  background-color: black;
+  background-color: transparent;
 }
 
 .n_arrow {
@@ -216,7 +211,6 @@ a:visited {
   left: 200px;
   width: 150px;
   height: 200px;
-  background-color: black;
 }
 
 .s_arrow {
@@ -225,7 +219,6 @@ a:visited {
   left: 200px;
   width: 150px;
   height: 200px;
-  background-color: black;
 }
 
 .w_arrow {
@@ -234,7 +227,6 @@ a:visited {
   left: 0px;
   width: 200px;
   height: 150px;
-  background-color: black;
 }
 
 .e_arrow {
@@ -243,5 +235,22 @@ a:visited {
   left: 350px;
   width: 200px;
   height: 150px;
-  background-color: black;
+}
+
+/*Room description */
+div.description {
+  position: absolute;
+  top: 610px;
+  left: 910px;
+  width: 600px;
+  height: 200px;
+  background-color: transparent
+}
+
+p.description {
+  color: grey;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 32px;
+  text-align: center;
+  vertical-align: middle;
 }

@@ -8,13 +8,15 @@ import (
 
 	//"strings"
 	"github.com/JohnDirewolf/capstone/maze"
+	"github.com/JohnDirewolf/capstone/shared/types"
 )
 
 // STRUCTURES
 type pageData struct {
-	Title   string
-	Rooms   template.HTML
-	Compass template.HTML
+	Title       string
+	Rooms       template.HTML
+	Compass     template.HTML
+	Description string
 }
 
 // HANDLERS
@@ -57,7 +59,7 @@ func Game(w http.ResponseWriter, r *http.Request) {
 		start(w)
 	case "end":
 		end(w)
-	case maze.North, maze.South, maze.West, maze.East:
+	case types.North, types.South, types.West, types.East:
 		move(action, w)
 	default:
 		//Unknown action
@@ -73,10 +75,12 @@ func start(w http.ResponseWriter) {
 	//Initialize the Maze
 	maze.Init()
 
+	compassHTML, roomTitle, roomDescription := maze.GetRoomInfo()
 	startPageData := pageData{
-		Title:   "Maze Runner - Start!",
-		Rooms:   maze.GenerateKnownMap(),
-		Compass: maze.GenerateCompass(),
+		Title:       roomTitle + "- Start",
+		Rooms:       maze.GenerateKnownMap(),
+		Compass:     compassHTML,
+		Description: "You enter the maze, the entrance slamming shut behind you. " + roomDescription,
 	}
 
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
@@ -120,10 +124,12 @@ func end(w http.ResponseWriter) {
 func move(direction string, w http.ResponseWriter) {
 	maze.Move(direction)
 
+	compassHTML, roomTitle, roomDescription := maze.GetRoomInfo()
 	startPageData := pageData{
-		Title:   "Maze Runner",
-		Rooms:   maze.GenerateKnownMap(),
-		Compass: maze.GenerateCompass(),
+		Title:       roomTitle,
+		Rooms:       maze.GenerateKnownMap(),
+		Compass:     compassHTML,
+		Description: roomDescription,
 	}
 
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
