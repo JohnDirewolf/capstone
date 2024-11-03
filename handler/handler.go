@@ -54,10 +54,10 @@ func Game(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	//Get the action path parameter from the request.
 	action := r.URL.Query().Get("action")
-	switch action {
-	case "start":
+	switch types.UrlAction(action) {
+	case types.Start:
 		start(w)
-	case "end":
+	case types.End:
 		end(w)
 	case types.North, types.South, types.West, types.East:
 		move(action, w)

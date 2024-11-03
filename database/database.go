@@ -34,11 +34,102 @@ func Init() error {
 func Clear() error {
 	_, err := heart.Exec("DELETE FROM rooms;")
 	if err != nil {
-		log.Printf("Database, Clear: Error inserting values for Room: %v", err)
+		log.Printf("Database, Clear: Error clearing rooms: %v", err)
+	}
+	_, err = heart.Exec("DELETE FROM items;")
+	if err != nil {
+		log.Printf("Database, Clear: Error clearing items: %v", err)
 	}
 	return err
 }
 
+func Close() error {
+	err := heart.Close()
+	if err != nil {
+		log.Printf("Database, Close: Error closing database: %v", err)
+	}
+	return err
+}
+
+// ////////// Item functions //////////
+func InsertItem(itemInfo types.ItemData) error {
+	_, err := heart.Exec(`
+		INSERT INTO items (
+			id, 
+			name,
+			description,
+			curLocation
+		) VALUES ($1, $2, $3, $4);`,
+		itemInfo.Id,
+		itemInfo.Name,
+		itemInfo.Description,
+		itemInfo.CurLocation)
+	if err != nil {
+		log.Printf("Database, InsertItem: Error inserting values for item: %v", err)
+	}
+	return err
+}
+
+func GetItemByID(itemID int) (types.ItemData, error) {
+	var item types.ItemData
+
+	itemRecord := heart.QueryRow("SELECT id, name, description, curLocation FROM items WHERE id=$1;", itemID)
+
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+	if err != nil {
+		log.Printf("Database, GetItem: Error getting data for item: %v", err)
+		return types.ItemData{}, err
+	}
+
+	return item, nil
+}
+
+func GetItemByName(itemName string) (types.ItemData, error) {
+	var item types.ItemData
+
+	itemRecord := heart.QueryRow("SELECT id, name, description, curLocation FROM items WHERE name=$1;", itemName)
+
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+	if err != nil {
+		log.Printf("Database, GetItem: Error getting data for item: %v", err)
+		return types.ItemData{}, err
+	}
+
+	return item, nil
+}
+
+func GetItemsByLocation(location int) ([]types.ItemData, error) {
+	var items []types.ItemData
+	var item types.ItemData
+	rows, err := heart.Query("SELECT id, name, description, curLocation FROM items WHERE curLocation=$1;", location)
+	if err != nil {
+		log.Printf("Database, GetItemsByLocation: Error getting list of items: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+		if err != nil {
+			log.Printf("Database, GetItemsByLocation: Error building list of items: %v", err)
+			return nil, err
+		}
+		items = append(items, item)
+	}
+
+	return items, nil
+}
+
+func MoveItemToLocation(itemId int, location int) error {
+	//location -1 is the Player's Inventory.
+	_, err := heart.Exec("UPDATE items SET location=$1 WHERE id=$2;", location, itemId)
+	if err != nil {
+		log.Printf("Database, MoveItemToLocation: Error updating location for item: %v", err)
+	}
+	return err
+}
+
+// ////////// Room functions //////////
 func GetRoom(roomID int) (types.RoomData, error) {
 	var room types.RoomData
 	// Temporary variables for scanning
@@ -50,7 +141,7 @@ func GetRoom(roomID int) (types.RoomData, error) {
 			doorSouth, doorSouthLocked, doorSouthKey_id,
 			doorWest, doorWestLocked, doorWestKey_id,
 			doorEast, doorEastLocked, doorEastKey_id
-			FROM rooms WHERE id=$1`
+			FROM rooms WHERE id=$1;`
 	roomRecord := heart.QueryRow(query, roomID)
 
 	// Use the retrieved variables to build the nested DoorData structures
@@ -141,14 +232,6 @@ func DiscoverRoom(roomID int) error {
 	_, err := heart.Exec("UPDATE rooms SET discovered=TRUE WHERE id=$1;", roomID)
 	if err != nil {
 		log.Printf("Database, DiscoverRoom: Error updating discovered for room: %v", err)
-	}
-	return err
-}
-
-func Close() error {
-	err := heart.Close()
-	if err != nil {
-		log.Printf("Database, Close: Error closing database: %v", err)
 	}
 	return err
 }

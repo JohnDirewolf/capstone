@@ -22,6 +22,26 @@ func Init() {
 	//rest the database to the initial state.
 	//Clear the database
 	database.Clear()
+	//Add items.
+	database.InsertItem(types.ItemData{
+		Id:          1,
+		Name:        "Golden Key",
+		Description: "A delicate golden ward key with a ruby in the bow.",
+		CurLocation: 8,
+	})
+	database.InsertItem(types.ItemData{
+		Id:          2,
+		Name:        "Magic Sword",
+		Description: "A sword that glows blue. Along the blad are runes that says \"Goblin Scourge\"",
+		CurLocation: 8,
+	})
+	//This sets up a lucky coin in the player's default inventory as item 0. Player inventory is location "-1"
+	database.InsertItem(types.ItemData{
+		Id:          0,
+		Name:        "Lucky Coin",
+		Description: "A ancient coin you found long ago and you feel has brought you luck.",
+		CurLocation: -1,
+	})
 	//Set up rooms to initial state
 	database.InsertRoom(types.RoomData{
 		Id:          0,
@@ -118,7 +138,7 @@ func Init() {
 		Title:       "Boil Room",
 		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
+		North:       types.DoorData{Exists: true, Locked: true, KeyID: sql.NullInt16{Int16: 1, Valid: true}},
 		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
 		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
 		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
@@ -195,7 +215,7 @@ func Move(direction string) {
 	if err != nil {
 		log.Printf("Maze, Move, Error getting room: %v\n", err)
 	}
-	switch direction {
+	switch types.UrlAction(direction) {
 	case types.North:
 		if room.North.Exists {
 			playerLocation += 4

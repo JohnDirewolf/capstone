@@ -2,11 +2,17 @@ package types
 
 import "database/sql"
 
-// Direction constants
-const North string = "north"
-const South string = "south"
-const West string = "west"
-const East string = "east"
+type UrlAction string
+
+// These are all the legit actions that can be sent in the URL.
+const (
+	Start UrlAction = "start"
+	End   UrlAction = "end"
+	North UrlAction = "north"
+	South UrlAction = "south"
+	West  UrlAction = "west"
+	East  UrlAction = "east"
+)
 
 type DoorData struct {
 	Exists bool
@@ -23,4 +29,11 @@ type RoomData struct {
 	South       DoorData
 	West        DoorData
 	East        DoorData
+}
+
+type ItemData struct {
+	Id          int
+	Name        string
+	Description string
+	CurLocation int
 }

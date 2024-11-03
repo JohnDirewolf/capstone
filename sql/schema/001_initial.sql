@@ -1,9 +1,9 @@
 -- +goose Up
 CREATE TABLE items (
     id INTEGER PRIMARY KEY,
-    description TEXT NOT NULL DEFAULT 'Mysterious Object',
-    initialLocation INTEGER,
-    currentLocation INTEGER
+    name TEXT NOT NULL DEFAULT 'An Item',
+    description TEXT NOT NULL DEFAULT 'A Mysterious Object',
+    curLocation INTEGER
 );
 
 CREATE TABLE rooms (
