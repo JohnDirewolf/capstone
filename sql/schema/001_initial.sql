@@ -1,7 +1,8 @@
 -- +goose Up
 CREATE TABLE items (
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL DEFAULT 'An Item',
+    name TEXT NOT NULL DEFAULT 'Item Name',
+    article TEXT NOT NULL DEFAULT 'an ',
     description TEXT NOT NULL DEFAULT 'A Mysterious Object',
     curLocation INTEGER
 );

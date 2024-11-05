@@ -1,15 +1,24 @@
 <!-- maze.html -->
 {{define "body"}}
+    <h4>{{.Title}}</h4>
+    {{.Instructions}}
     <div class="main">
         <div class="maze">
             {{.Rooms}}
         </div>
         <div class="compass">
             {{.Compass}}
-            <p class="return"><a href="/">RETURN<br />HOME</a></p>
+            <div class="return">
+                <a class="return" href="/"><span class="return">RETURN<br />HOME</span></a>
+            </div>
+        </div>
+        <div class="inventory">
+            <p class="inventory-title">Inventory</p>
+            <p class="inventory">{{.Inventory}}</p>
         </div>
         <div class="description">
             <p class="description">{{.Description}}</p>
         </div>
+        {{.Action}}
     </div>
 {{end}}

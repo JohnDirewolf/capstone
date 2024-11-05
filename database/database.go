@@ -57,11 +57,13 @@ func InsertItem(itemInfo types.ItemData) error {
 		INSERT INTO items (
 			id, 
 			name,
+			article,
 			description,
 			curLocation
-		) VALUES ($1, $2, $3, $4);`,
+		) VALUES ($1, $2, $3, $4, $5);`,
 		itemInfo.Id,
 		itemInfo.Name,
+		itemInfo.Article,
 		itemInfo.Description,
 		itemInfo.CurLocation)
 	if err != nil {
@@ -73,9 +75,9 @@ func InsertItem(itemInfo types.ItemData) error {
 func GetItemByID(itemID int) (types.ItemData, error) {
 	var item types.ItemData
 
-	itemRecord := heart.QueryRow("SELECT id, name, description, curLocation FROM items WHERE id=$1;", itemID)
+	itemRecord := heart.QueryRow("SELECT id, name, article, description, curLocation FROM items WHERE id=$1;", itemID)
 
-	err := itemRecord.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
 	if err != nil {
 		log.Printf("Database, GetItem: Error getting data for item: %v", err)
 		return types.ItemData{}, err
@@ -87,9 +89,9 @@ func GetItemByID(itemID int) (types.ItemData, error) {
 func GetItemByName(itemName string) (types.ItemData, error) {
 	var item types.ItemData
 
-	itemRecord := heart.QueryRow("SELECT id, name, description, curLocation FROM items WHERE name=$1;", itemName)
+	itemRecord := heart.QueryRow("SELECT id, name, article, description, curLocation FROM items WHERE name=$1;", itemName)
 
-	err := itemRecord.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
 	if err != nil {
 		log.Printf("Database, GetItem: Error getting data for item: %v", err)
 		return types.ItemData{}, err
@@ -101,7 +103,7 @@ func GetItemByName(itemName string) (types.ItemData, error) {
 func GetItemsByLocation(location int) ([]types.ItemData, error) {
 	var items []types.ItemData
 	var item types.ItemData
-	rows, err := heart.Query("SELECT id, name, description, curLocation FROM items WHERE curLocation=$1;", location)
+	rows, err := heart.Query("SELECT id, name, article, description, curLocation FROM items WHERE curLocation=$1;", location)
 	if err != nil {
 		log.Printf("Database, GetItemsByLocation: Error getting list of items: %v", err)
 		return nil, err
@@ -109,7 +111,7 @@ func GetItemsByLocation(location int) ([]types.ItemData, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&item.Id, &item.Name, &item.Description, &item.CurLocation)
+		err := rows.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
 		if err != nil {
 			log.Printf("Database, GetItemsByLocation: Error building list of items: %v", err)
 			return nil, err
@@ -122,7 +124,7 @@ func GetItemsByLocation(location int) ([]types.ItemData, error) {
 
 func MoveItemToLocation(itemId int, location int) error {
 	//location -1 is the Player's Inventory.
-	_, err := heart.Exec("UPDATE items SET location=$1 WHERE id=$2;", location, itemId)
+	_, err := heart.Exec("UPDATE items SET Curlocation=$1 WHERE id=$2;", location, itemId)
 	if err != nil {
 		log.Printf("Database, MoveItemToLocation: Error updating location for item: %v", err)
 	}
