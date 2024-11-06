@@ -433,6 +433,10 @@ p.description {
   vertical-align: middle;
 }
 
+span.locked {
+  color: red;
+}
+
 div.action {
   position: absolute;
   top: 650px;

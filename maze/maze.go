@@ -22,6 +22,7 @@ func Init() {
 	//rest the database to the initial state.
 	//Clear the database
 	database.Clear()
+	var room types.RoomData
 	//Add items.
 	database.InsertItem(types.ItemData{
 		Id:          1,
@@ -45,200 +46,233 @@ func Init() {
 		Description: "A ancient coin you found long ago and you feel has brought you luck.",
 		CurLocation: -1,
 	})
-	//Set up rooms to initial state
-	database.InsertRoom(types.RoomData{
+	//Set up rooms to initial state and the room's doors
+	room = types.RoomData{
 		Id:          0,
 		Title:       "Bark Room",
 		Description: "The room is covered in various types of tree bark. The smell is musky. The only exist is the way you entered to the East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          1,
 		Title:       "Leaf Room",
 		Description: "You find a room overgrown with leaves. Pushing through the folliage you find exits to the North, West, and East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          2,
 		Title:       "Stone Room",
 		Description: "You are in a room made of cleaved stones. You see doors to the North, West, and East.",
 		Discovered:  true,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          3,
 		Title:       "Grass Room",
 		Description: "This room is filled with grass and smells natural and clean. You can make out doors to the North and West.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          4,
 		Title:       "Dirt Room",
 		Description: "You enter a room that is empty, the foor being ony dirt. There are exits to the North and East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          5,
 		Title:       "Water Room",
 		Description: "As you enter you fall into a pool of warm water. Swimming about you find exits to the North, South and West.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          6,
 		Title:       "Oil Room",
 		Description: "The air is hard to breath here as the room is knee deep in black oil. Wading through the room you find doors to the North and South.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          7,
 		Title:       "Wood Room",
 		Description: "All around is worked wood creating a cosy cabin feel. There is only a door to the South.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          8,
 		Title:       "Lava Room",
 		Description: "The heat in this room is nearly unbarable as the floor is mostly lava. There seems to be no way forward, only the exit to the South.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          9,
 		Title:       "Boil Room",
-		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South.",
+		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South. The Northern door is covered in gold inlay.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: true, KeyID: sql.NullInt16{Int16: 1, Valid: true}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: true, KeyId: sql.NullInt16{Int16: 1, Valid: true}}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          10,
 		Title:       "Mud Room",
 		Description: "You find a huge expanse of cracked mud, desperate for water. You can see exits South and East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          11,
 		Title:       "Rust Room",
 		Description: "There is the sound of clanking metals and steam flowing through old pipes in this room filed with rusted machinery. There are doors to the North and West.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          12,
 		Title:       "Copper Room - Goal!",
 		Description: "Huzzah! Entering this room made of copper and metal you see a large portal open, and show the way out. You can go back to the maze to the East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          13,
 		Title:       "Gold Room",
 		Description: "The room glitters with gold in all shapes and sizes, then you realize it is just fool's gold. You see doors through the faux horde to the South, West and East.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          14,
 		Title:       "Magma Room",
 		Description: "A powerful heat radiates from this room, magma slowly shifing. There is no other exit then the door you came in to the West.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
-	database.InsertRoom(types.RoomData{
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	database.InsertRoom(room)
+
+	room = types.RoomData{
 		Id:          15,
 		Title:       "Granite Room",
 		Description: "You enter a quarry of granite and stone. You only see a door back South.",
 		Discovered:  false,
-		North:       types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		South:       types.DoorData{Exists: true, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		West:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-		East:        types.DoorData{Exists: false, Locked: false, KeyID: sql.NullInt16{Valid: false}},
-	})
+		Doors:       make(map[string]types.DoorData),
+	}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	database.InsertRoom(room)
 
 	//Set player location to starting room, 2
 	playerLocation = 2
 }
 
-func Move(direction string) {
+func Move(direction types.UrlAction) bool {
 	//Each direction changes the playerLocation by a different value. If there is no direction, then playerLocation does not change.
+	var lockedDoor bool
 	//Get a RoomData from the Database
 	room, err := database.GetRoom(playerLocation)
 	if err != nil {
 		log.Printf("Maze, Move, Error getting room: %v\n", err)
 	}
-	switch types.UrlAction(direction) {
+
+	switch direction {
 	case types.North:
-		if room.North.Exists {
-			playerLocation += 4
+		if doorData, ok := room.Doors[string(types.North)]; ok {
+			if doorData.Locked {
+				lockedDoor = true
+			} else {
+				playerLocation += 4
+			}
 		}
 	case types.South:
-		if room.South.Exists {
-			playerLocation -= 4
+		if doorData, ok := room.Doors[string(types.South)]; ok {
+			if doorData.Locked {
+				lockedDoor = true
+			} else {
+				playerLocation -= 4
+			}
 		}
 	case types.West:
-		if room.West.Exists {
-			playerLocation -= 1
+		if doorData, ok := room.Doors[string(types.West)]; ok {
+			if doorData.Locked {
+				lockedDoor = true
+			} else {
+				playerLocation -= 1
+			}
 		}
 	case types.East:
-		if room.East.Exists {
-			playerLocation += 1
+		if doorData, ok := room.Doors[string(types.East)]; ok {
+			if doorData.Locked {
+				lockedDoor = true
+			} else {
+				playerLocation += 1
+			}
 		}
 	}
-
 	//This sets the room the player is in to discovered, regardless if the player moved or not.
 	database.DiscoverRoom(playerLocation)
+
+	return lockedDoor
 }
 
 func GetItems() {
@@ -280,22 +314,22 @@ func GetPageInfo() types.PageData {
 	if err != nil {
 		log.Printf("Maze, GenerateCompass, Error getting room: %v\n", err)
 	}
-	if room.North.Exists {
+	if _, ok := room.Doors["north"]; ok {
 		fmt.Fprint(&compass, `<div class="n-arrow"><a href="/app?action=north"><img class="n-arrow" src="/assets/images/green_arrow_n.png" alt="Green Arrow North" width="100" height="100" /></a></div>`)
 	} else {
 		fmt.Fprint(&compass, `<div class="n-arrow"><img class="n-arrow" src="/assets/images/red_arrow_n.png" alt="Red Arrow North" width="100" height="100" /></div>`)
 	}
-	if room.South.Exists {
+	if _, ok := room.Doors["south"]; ok {
 		fmt.Fprint(&compass, `<div class="s-arrow"><a href="/app?action=south"><img class="s-arrow" src="/assets/images/green_arrow_s.png" alt="Green Arrow South" width="100" height="100" /></a></div>`)
 	} else {
 		fmt.Fprint(&compass, `<div class="s-arrow"><img class="s-arrow" src="/assets/images/red_arrow_s.png" alt="Red Arrow South" width="100" height="100" /></div>`)
 	}
-	if room.West.Exists {
+	if _, ok := room.Doors["west"]; ok {
 		fmt.Fprint(&compass, `<div class="w-arrow"><a href="/app?action=west"><img class="w-arrow" src="/assets/images/green_arrow_w.png" alt="Green Arrow West" width="100" height="100" /></a></div>`)
 	} else {
 		fmt.Fprint(&compass, `<div class="w-arrow"><img class="w-arrow" src="/assets/images/red_arrow_w.png" alt="Red Arrow West" width="100" height="100" /></div>`)
 	}
-	if room.East.Exists {
+	if _, ok := room.Doors["east"]; ok {
 		fmt.Fprint(&compass, `<div class="e-arrow"><a href="/app?action=east"><img class="e-arrow" src="/assets/images/green_arrow_e.png" alt="Green Arrow East" width="100" height="100" /></a></div>`)
 	} else {
 		fmt.Fprint(&compass, `<div class="e-arrow"><img class="e-arrow" src="/assets/images/red_arrow_e.png" alt="Red Arrow East" width="100" height="100" /></div>`)

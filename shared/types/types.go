@@ -8,6 +8,7 @@ import (
 type UrlAction string
 
 // These are all the legit actions that can be sent in the URL.
+
 const (
 	Start UrlAction = "start"
 	End   UrlAction = "end"
@@ -19,9 +20,11 @@ const (
 )
 
 type DoorData struct {
-	Exists bool
-	Locked bool
-	KeyID  sql.NullInt16
+	Id        int
+	RoomId    int
+	Direction string
+	Locked    bool
+	KeyId     sql.NullInt16
 }
 
 type RoomData struct {
@@ -29,10 +32,7 @@ type RoomData struct {
 	Title       string
 	Description string
 	Discovered  bool
-	North       DoorData
-	South       DoorData
-	West        DoorData
-	East        DoorData
+	Doors       map[string]DoorData
 }
 
 type ItemData struct {
@@ -51,4 +51,9 @@ type PageData struct {
 	Inventory    template.HTML
 	Action       template.HTML
 	Instructions template.HTML
+}
+
+type SpecialStatus struct {
+	IsStart  bool
+	IsLocked bool
 }

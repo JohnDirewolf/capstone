@@ -38,14 +38,14 @@ func Root(w http.ResponseWriter, r *http.Request) {
 }
 
 func Game(w http.ResponseWriter, r *http.Request) {
-	//This takes the action encoded in r and updates and displays the new updated page.
+	//This takes the action in the URL in r and updates and displays the new updated page.
 	//To prevent caching, add the following header to the response "Cache-Control: no-store or Cache-Control: no-cache, no-store, must-revalidate"
 
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusOK)
 	//Get the action path parameter from the request.
-	action := r.URL.Query().Get("action")
+	action := types.UrlAction(r.URL.Query().Get("action"))
 	switch types.UrlAction(action) {
 	case types.Start:
 		start(w)
@@ -68,7 +68,7 @@ func Game(w http.ResponseWriter, r *http.Request) {
 func start(w http.ResponseWriter) {
 	//Initialize the Maze
 	maze.Init()
-	generateRoom(w, true)
+	generateRoom(w, types.SpecialStatus{IsStart: true})
 }
 
 func end(w http.ResponseWriter) {
@@ -92,17 +92,17 @@ func end(w http.ResponseWriter) {
 	}
 }
 
-func move(direction string, w http.ResponseWriter) {
-	maze.Move(direction)
-	generateRoom(w, false)
+func move(direction types.UrlAction, w http.ResponseWriter) {
+	locked := maze.Move(direction)
+	generateRoom(w, types.SpecialStatus{IsLocked: locked})
 }
 
 func get(w http.ResponseWriter) {
 	maze.GetItems()
-	generateRoom(w, false)
+	generateRoom(w, types.SpecialStatus{})
 }
 
-func generateRoom(w http.ResponseWriter, isStart bool) {
+func generateRoom(w http.ResponseWriter, special types.SpecialStatus) {
 	var pageInfo types.PageData
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
 	if err != nil {
@@ -115,9 +115,15 @@ func generateRoom(w http.ResponseWriter, isStart bool) {
 
 	pageInfo = maze.GetPageInfo()
 	//Start has a few extra things that need to be set.
-	if isStart {
-		pageInfo.Description = template.HTML("The entrace slams shut behind you. You will have to look for a different exit!<br />") + pageInfo.Description
+	if special.IsStart {
+		pageInfo.Description = template.HTML(`The entrace slams shut behind you. You will have to look for a different exit!<br />`) + pageInfo.Description
 		pageInfo.Instructions = maze.GetInstructions()
+	}
+	//If the door was locked the use tried to use, upate Description to explain that
+	if special.IsLocked {
+		//Check if the player has the key.
+
+		pageInfo.Description = template.HTML(`<span class="locked">Locked! The door you tried is locked.<br />Perhaps you can find a key?</span><br />`) + pageInfo.Description
 	}
 
 	err = pageTemplate.Execute(w, pageInfo)
