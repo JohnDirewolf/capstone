@@ -36,21 +36,51 @@ func Clear() error {
 	if err != nil {
 		log.Printf("Database, Clear: Error clearing doors: %v", err)
 	}
-	_, err = heart.Exec("DELETE FROM rooms;")
+	_, err = heart.Exec("DELETE FROM creatures;")
 	if err != nil {
-		log.Printf("Database, Clear: Error clearing rooms: %v", err)
+		log.Printf("Database, Clear: Error clearing creatures: %v", err)
 	}
 	_, err = heart.Exec("DELETE FROM items;")
 	if err != nil {
 		log.Printf("Database, Clear: Error clearing items: %v", err)
 	}
+	_, err = heart.Exec("DELETE FROM rooms;")
+	if err != nil {
+		log.Printf("Database, Clear: Error clearing rooms: %v", err)
+	}
 	return err
+
 }
 
 func Close() error {
 	err := heart.Close()
 	if err != nil {
 		log.Printf("Database, Close: Error closing database: %v", err)
+	}
+	return err
+}
+
+// ////////// Creature functions //////////
+func InsertCreature(creatureInfo types.CreatureData) error {
+	_, err := heart.Exec(`
+		INSERT INTO creatures (
+			id, 
+			name,
+			type,
+			description,
+			is_alive,
+			vanquished_by,
+			cur_location
+		) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+		creatureInfo.Id,
+		creatureInfo.Name,
+		creatureInfo.Type,
+		creatureInfo.Description,
+		creatureInfo.IsAlive,
+		creatureInfo.VanquishedBy,
+		creatureInfo.CurLocation)
+	if err != nil {
+		log.Printf("Database, InsertCreature: Error inserting values for creature: %v", err)
 	}
 	return err
 }
@@ -63,12 +93,14 @@ func InsertItem(itemInfo types.ItemData) error {
 			name,
 			article,
 			description,
-			curLocation
-		) VALUES ($1, $2, $3, $4, $5);`,
+			type,
+			cur_location
+		) VALUES ($1, $2, $3, $4, $5, $6);`,
 		itemInfo.Id,
 		itemInfo.Name,
 		itemInfo.Article,
 		itemInfo.Description,
+		itemInfo.Type,
 		itemInfo.CurLocation)
 	if err != nil {
 		log.Printf("Database, InsertItem: Error inserting values for item: %v", err)
@@ -79,9 +111,9 @@ func InsertItem(itemInfo types.ItemData) error {
 func GetItemByID(itemID int) (types.ItemData, error) {
 	var item types.ItemData
 
-	itemRecord := heart.QueryRow("SELECT id, name, article, description, curLocation FROM items WHERE id=$1;", itemID)
+	itemRecord := heart.QueryRow("SELECT id, name, article, description, type, cur_location FROM items WHERE id=$1;", itemID)
 
-	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.Type, &item.CurLocation)
 	if err != nil {
 		log.Printf("Database, GetItem: Error getting data for item: %v", err)
 		return types.ItemData{}, err
@@ -93,9 +125,9 @@ func GetItemByID(itemID int) (types.ItemData, error) {
 func GetItemByName(itemName string) (types.ItemData, error) {
 	var item types.ItemData
 
-	itemRecord := heart.QueryRow("SELECT id, name, article, description, curLocation FROM items WHERE name=$1;", itemName)
+	itemRecord := heart.QueryRow("SELECT id, name, article, description, type, cur_location FROM items WHERE name=$1;", itemName)
 
-	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
+	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.Type, &item.CurLocation)
 	if err != nil {
 		log.Printf("Database, GetItem: Error getting data for item: %v", err)
 		return types.ItemData{}, err
@@ -107,7 +139,7 @@ func GetItemByName(itemName string) (types.ItemData, error) {
 func GetItemsByLocation(location int) ([]types.ItemData, error) {
 	var items []types.ItemData
 	var item types.ItemData
-	rows, err := heart.Query("SELECT id, name, article, description, curLocation FROM items WHERE curLocation=$1;", location)
+	rows, err := heart.Query("SELECT id, name, article, description, type, cur_location FROM items WHERE cur_location=$1;", location)
 	if err != nil {
 		log.Printf("Database, GetItemsByLocation: Error getting list of items: %v", err)
 		return nil, err
@@ -115,7 +147,7 @@ func GetItemsByLocation(location int) ([]types.ItemData, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.CurLocation)
+		err := rows.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.Type, &item.CurLocation)
 		if err != nil {
 			log.Printf("Database, GetItemsByLocation: Error building list of items: %v", err)
 			return nil, err
@@ -128,7 +160,7 @@ func GetItemsByLocation(location int) ([]types.ItemData, error) {
 
 func MoveItemToLocation(itemId int, location int) error {
 	//location -1 is the Player's Inventory.
-	_, err := heart.Exec("UPDATE items SET Curlocation=$1 WHERE id=$2;", location, itemId)
+	_, err := heart.Exec("UPDATE items SET cur_location=$1 WHERE id=$2;", location, itemId)
 	if err != nil {
 		log.Printf("Database, MoveItemToLocation: Error updating location for item: %v", err)
 	}
@@ -139,7 +171,7 @@ func DoesUserHaveKey() bool {
 	//All this does is check if the user has the Golden Key.
 	var curLocation int
 
-	keyRecord := heart.QueryRow("SELECT curLocation FROM items WHERE id=1;")
+	keyRecord := heart.QueryRow("SELECT cur_location FROM items WHERE id=1;")
 
 	err := keyRecord.Scan(&curLocation)
 	if err != nil {
@@ -157,6 +189,16 @@ func UnlockDoor(doorId int) error {
 	_, err := heart.Exec("UPDATE doors SET locked=false WHERE id=$1;", doorId)
 	if err != nil {
 		log.Printf("Database, Unlock: Error unlocking door: %v", err)
+	}
+	return err
+}
+
+func LockDoor(doorId int, keyId int) error {
+	//There is currently just the one door, but we accept a doorId from maze if we add more locked doors.
+	//We set locked to true and also the item_id of the key.
+	_, err := heart.Exec("UPDATE doors SET locked=true, key_id=$1 WHERE id=$2;", keyId, doorId)
+	if err != nil {
+		log.Printf("Database, Lock: Error locking door: %v", err)
 	}
 	return err
 }

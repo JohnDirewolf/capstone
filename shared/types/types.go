@@ -42,7 +42,18 @@ type ItemData struct {
 	Name        string
 	Article     string
 	Description string
+	Type        string
 	CurLocation int
+}
+
+type CreatureData struct {
+	Id           int
+	Name         string
+	Type         string
+	Description  string
+	IsAlive      bool
+	VanquishedBy sql.NullInt16
+	CurLocation  int
 }
 
 type PageData struct {

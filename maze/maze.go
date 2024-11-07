@@ -23,30 +23,17 @@ func Init() {
 	//Clear the database
 	database.Clear()
 	var room types.RoomData
-	//Add items.
-	database.InsertItem(types.ItemData{
-		Id:          1,
-		Name:        "Golden Key",
-		Article:     "a ",
-		Description: "A delicate golden ward key with a ruby in the bow.",
-		CurLocation: 8,
-	})
-	database.InsertItem(types.ItemData{
-		Id:          2,
-		Name:        "Magic Sword",
-		Article:     "a ",
-		Description: "A sword that glows blue. Along the blad are runes that says \"Goblin Scourge\"",
-		CurLocation: 15,
-	})
-	//This sets up a lucky coin in the player's default inventory as item 0. Player inventory is location "-1"
-	database.InsertItem(types.ItemData{
-		Id:          0,
-		Name:        "Lucky Coin",
-		Article:     "a ",
-		Description: "A ancient coin you found long ago and you feel has brought you luck.",
-		CurLocation: -1,
-	})
-	//Set up rooms to initial state and the room's doors
+
+	//Room -1 is a container for the user's inventory, this allows items to reference an existing room even if with the player.
+	room = types.RoomData{
+		Id:          -1,
+		Title:       "Player Inventory",
+		Description: "Items the Player has in their inventory",
+		Discovered:  false,
+	}
+	database.InsertRoom(room)
+
+	//Set up rooms to initial state and the room's doors, but all doors are unlocked. Locks reference key items and so after the items are created we lock the doors (currently 1) we want locked.
 	room = types.RoomData{
 		Id:          0,
 		Title:       "Bark Room",
@@ -153,7 +140,7 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: true, KeyId: sql.NullInt16{Int16: 1, Valid: true}}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
 	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
 	database.InsertRoom(room)
 
@@ -221,6 +208,49 @@ func Init() {
 	}
 	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
 	database.InsertRoom(room)
+
+	//Add items.
+	database.InsertItem(types.ItemData{
+		Id:          1,
+		Name:        "Golden Key",
+		Article:     "a ",
+		Description: "A delicate golden ward key with a ruby in the bow.",
+		Type:        "key",
+		CurLocation: 8,
+	})
+	database.InsertItem(types.ItemData{
+		Id:          2,
+		Name:        "Magic Sword",
+		Article:     "a ",
+		Description: "A sword that glows blue. Along the blad are runes that says \"Goblin Scourge\"",
+		Type:        "sword",
+		CurLocation: 15,
+	})
+	//This sets up a lucky coin in the player's default inventory as item 0. Player inventory is location "-1"
+	database.InsertItem(types.ItemData{
+		Id:          0,
+		Name:        "Lucky Coin",
+		Article:     "a ",
+		Description: "A ancient coin you found long ago and you feel has brought you luck.",
+		Type:        "coin",
+		CurLocation: -1,
+	})
+
+	//All items created, so now lock our door(s). Door ideas follow the roomID * 4 plus direction index, north = 0, south = 1, west = 2, east = 3
+	err := database.LockDoor((9*4)+0, 1)
+	if err != nil {
+		log.Printf("Maze, Lock: Error locking door: %v", err)
+	}
+
+	database.InsertCreature(types.CreatureData{
+		Id:           1,
+		Name:         "Wartz",
+		Type:         "Goblin",
+		Description:  "A powerful looking goblin with a huge club.",
+		IsAlive:      true,
+		VanquishedBy: sql.NullInt16{Int16: 2, Valid: true},
+		CurLocation:  13,
+	})
 
 	//Set player location to starting room, 2
 	playerLocation = 2
