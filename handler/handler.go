@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	//"strings"
+
 	"github.com/JohnDirewolf/capstone/maze"
 	"github.com/JohnDirewolf/capstone/shared/types"
 )
@@ -113,18 +114,7 @@ func generateRoom(w http.ResponseWriter, special types.SpecialStatus) {
 		return
 	}
 
-	pageInfo = maze.GetPageInfo()
-	//Start has a few extra things that need to be set.
-	if special.IsStart {
-		pageInfo.Description = template.HTML(`The entrace slams shut behind you. You will have to look for a different exit!<br />`) + pageInfo.Description
-		pageInfo.Instructions = maze.GetInstructions()
-	}
-	//If the door was locked the use tried to use, upate Description to explain that
-	if special.IsLocked {
-		//Check if the player has the key.
-
-		pageInfo.Description = template.HTML(`<span class="locked">Locked! The door you tried is locked.<br />Perhaps you can find a key?</span><br />`) + pageInfo.Description
-	}
+	pageInfo = maze.GetPageInfo(special)
 
 	err = pageTemplate.Execute(w, pageInfo)
 	if err != nil {

@@ -304,36 +304,38 @@ func GenerateKnownMap() template.HTML {
 	return template.HTML(knownMap.String())
 }
 
-func GetPageInfo() types.PageData {
+func GetPageInfo(special types.SpecialStatus) types.PageData {
 	var compass strings.Builder
 	var inventory strings.Builder
 	var description strings.Builder
 	var action strings.Builder
+	var instructions template.HTML
 	room, err := database.GetRoom(playerLocation)
 	//log.Printf("Room returned to GenerateCompass is: %v", room)
 	if err != nil {
 		log.Printf("Maze, GenerateCompass, Error getting room: %v\n", err)
 	}
 	if _, ok := room.Doors["north"]; ok {
-		fmt.Fprint(&compass, `<div class="n-arrow"><a href="/app?action=north"><img class="n-arrow" src="/assets/images/green_arrow_n.png" alt="Green Arrow North" width="100" height="100" /></a></div>`)
+		compass.WriteString(`<div class="n-arrow"><a href="/app?action=north"><img class="n-arrow" src="/assets/images/green_arrow_n.png" alt="Green Arrow North" width="100" height="100" /></a></div>`)
 	} else {
-		fmt.Fprint(&compass, `<div class="n-arrow"><img class="n-arrow" src="/assets/images/red_arrow_n.png" alt="Red Arrow North" width="100" height="100" /></div>`)
+		compass.WriteString(`<div class="n-arrow"><img class="n-arrow" src="/assets/images/red_arrow_n.png" alt="Red Arrow North" width="100" height="100" /></div>`)
 	}
 	if _, ok := room.Doors["south"]; ok {
-		fmt.Fprint(&compass, `<div class="s-arrow"><a href="/app?action=south"><img class="s-arrow" src="/assets/images/green_arrow_s.png" alt="Green Arrow South" width="100" height="100" /></a></div>`)
+		compass.WriteString(`<div class="s-arrow"><a href="/app?action=south"><img class="s-arrow" src="/assets/images/green_arrow_s.png" alt="Green Arrow South" width="100" height="100" /></a></div>`)
 	} else {
-		fmt.Fprint(&compass, `<div class="s-arrow"><img class="s-arrow" src="/assets/images/red_arrow_s.png" alt="Red Arrow South" width="100" height="100" /></div>`)
+		compass.WriteString(`<div class="s-arrow"><img class="s-arrow" src="/assets/images/red_arrow_s.png" alt="Red Arrow South" width="100" height="100" /></div>`)
 	}
 	if _, ok := room.Doors["west"]; ok {
-		fmt.Fprint(&compass, `<div class="w-arrow"><a href="/app?action=west"><img class="w-arrow" src="/assets/images/green_arrow_w.png" alt="Green Arrow West" width="100" height="100" /></a></div>`)
+		compass.WriteString(`<div class="w-arrow"><a href="/app?action=west"><img class="w-arrow" src="/assets/images/green_arrow_w.png" alt="Green Arrow West" width="100" height="100" /></a></div>`)
 	} else {
-		fmt.Fprint(&compass, `<div class="w-arrow"><img class="w-arrow" src="/assets/images/red_arrow_w.png" alt="Red Arrow West" width="100" height="100" /></div>`)
+		compass.WriteString(`<div class="w-arrow"><img class="w-arrow" src="/assets/images/red_arrow_w.png" alt="Red Arrow West" width="100" height="100" /></div>`)
 	}
 	if _, ok := room.Doors["east"]; ok {
-		fmt.Fprint(&compass, `<div class="e-arrow"><a href="/app?action=east"><img class="e-arrow" src="/assets/images/green_arrow_e.png" alt="Green Arrow East" width="100" height="100" /></a></div>`)
+		compass.WriteString(`<div class="e-arrow"><a href="/app?action=east"><img class="e-arrow" src="/assets/images/green_arrow_e.png" alt="Green Arrow East" width="100" height="100" /></a></div>`)
 	} else {
-		fmt.Fprint(&compass, `<div class="e-arrow"><img class="e-arrow" src="/assets/images/red_arrow_e.png" alt="Red Arrow East" width="100" height="100" /></div>`)
+		compass.WriteString(`<div class="e-arrow"><img class="e-arrow" src="/assets/images/red_arrow_e.png" alt="Red Arrow East" width="100" height="100" /></div>`)
 	}
+
 	//Show character inventory (Location -1)
 	itemsInInventory, err := database.GetItemsByLocation(-1)
 	if err != nil {
@@ -341,52 +343,75 @@ func GetPageInfo() types.PageData {
 	}
 	for index, item := range itemsInInventory {
 		if index >= 1 {
-			fmt.Fprint(&inventory, "<br />")
+			inventory.WriteString("<br />")
 		}
-		fmt.Fprint(&inventory, item.Name)
+		inventory.WriteString(item.Name)
 	}
 
+	//Description - First we check for the special cases for page information.
+	//If the is the start we set extra text and the instructions set.
+	if special.IsStart {
+		description.WriteString(`The entrace slams shut behind you. You will have to look for a different exit!<br />`)
+		instructions = getInstructions()
+	}
+
+	//Next if we moved and door was locked then we print warning text or add an action if the user has the key.
+	//If we are in a room with a locked door (room 9) then check if the user has the key (1) and either add acton to use key or tell them the door is locked
+	if special.IsLocked {
+		//Check if the player has the golden key.
+		if database.DoesUserHaveKey() {
+			description.WriteString(`<span class="locked">Locked! Try the key!</span><br />`)
+			//Add use action
+			action.WriteString(`<div class="action"><a class="action" href="/app?action=use"><span class="action">Use Golden Key</span></a></div>`)
+		} else {
+			description.WriteString(`<span class="locked">Locked! The door you tried is locked.<br />Perhaps you can find a key?</span><br />`)
+		}
+	}
+
+	//Get The basic room Description
+	description.WriteString(room.Description)
+
 	//Checking for items in the room. If there are item(s) in the room we add an action, get item, and the item(s) are added to the description.
-	fmt.Fprint(&description, room.Description)
 	itemsInLocation, err := database.GetItemsByLocation(playerLocation)
 	if err != nil {
 		log.Printf("Maze, GetePageInfo, Error getting room items: %v\n", err)
 	}
 	if len(itemsInLocation) >= 1 {
-		fmt.Fprint(&description, "<br />In the room you see: ")
+		description.WriteString("<br />In the room you see: ")
 		for index, item := range itemsInLocation {
 			if index >= 1 {
-				fmt.Fprint(&description, ", ")
+				description.WriteString(", ")
 			}
-			fmt.Fprint(&description, item.Article)
-			fmt.Fprint(&description, item.Name)
+			description.WriteString(item.Article)
+			description.WriteString(item.Name)
 		}
 		//Action to get items
-		fmt.Fprint(&action, `<div class="action"><a class="action" href="/app?action=get"><span class="action">`)
+		action.WriteString(`<div class="action"><a class="action" href="/app?action=get"><span class="action">`)
 		if len(itemsInLocation) == 1 {
 			//Single item in room.
-			fmt.Fprint(&action, `Get `)
-			fmt.Fprint(&action, itemsInLocation[0].Name)
+			action.WriteString(`Get `)
+			action.WriteString(itemsInLocation[0].Name)
 		} else {
 			//More then one item in the room.
-			fmt.Fprint(&action, `Get all items.`)
+			action.WriteString(`Get all items.`)
 		}
-		fmt.Fprint(&action, `</span></a></div>`)
+		action.WriteString(`</span></a></div>`)
 	}
 
 	pageData := types.PageData{
-		Title:       room.Title,
-		Rooms:       GenerateKnownMap(),
-		Compass:     template.HTML(compass.String()),
-		Inventory:   template.HTML(inventory.String()),
-		Description: template.HTML(description.String()),
-		Action:      template.HTML(action.String()),
+		Title:        room.Title,
+		Rooms:        GenerateKnownMap(),
+		Compass:      template.HTML(compass.String()),
+		Inventory:    template.HTML(inventory.String()),
+		Description:  template.HTML(description.String()),
+		Action:       template.HTML(action.String()),
+		Instructions: instructions,
 	}
 
 	return pageData
 }
 
-func GetInstructions() template.HTML {
+func getInstructions() template.HTML {
 	//This sends the Instructions HTML when we want to display them, specifically on the start of the game.
 	return template.HTML(`
 		<div class="instructions">

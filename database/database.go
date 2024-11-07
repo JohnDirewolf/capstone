@@ -135,6 +135,23 @@ func MoveItemToLocation(itemId int, location int) error {
 	return err
 }
 
+func DoesUserHaveKey() bool {
+	//All this does is check if the user has the Golden Key.
+	var curLocation int
+
+	keyRecord := heart.QueryRow("SELECT curLocation FROM items WHERE id=1;")
+
+	err := keyRecord.Scan(&curLocation)
+	if err != nil {
+		log.Printf("Database, DoesUserHaveKey: Error getting data for key: %v", err)
+		return false
+	}
+	if curLocation == -1 {
+		return true
+	}
+	return false
+}
+
 // ////////// Room functions //////////
 func GetRoom(roomID int) (types.RoomData, error) {
 	var room types.RoomData

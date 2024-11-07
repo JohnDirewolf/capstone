@@ -10,13 +10,15 @@ type UrlAction string
 // These are all the legit actions that can be sent in the URL.
 
 const (
-	Start UrlAction = "start"
-	End   UrlAction = "end"
-	Get   UrlAction = "get"
-	North UrlAction = "north"
-	South UrlAction = "south"
-	West  UrlAction = "west"
-	East  UrlAction = "east"
+	Start  UrlAction = "start"
+	End    UrlAction = "end"
+	Get    UrlAction = "get"    //items, key or sword
+	Use    UrlAction = "use"    //key
+	Attack UrlAction = "attack" //goblin
+	North  UrlAction = "north"
+	South  UrlAction = "south"
+	West   UrlAction = "west"
+	East   UrlAction = "east"
 )
 
 type DoorData struct {
