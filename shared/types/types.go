@@ -58,4 +58,5 @@ type PageData struct {
 type SpecialStatus struct {
 	IsStart  bool
 	IsLocked bool
+	Unlocked bool
 }

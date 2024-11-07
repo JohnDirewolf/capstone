@@ -286,6 +286,12 @@ func GetItems() {
 	}
 }
 
+func UseKey() {
+	//The user is in the correct room and has tried to go through the locked door and has the key to have this action. So unlock the door.
+	//We do send the doorId in case we add more locked doors. Door Id is based on the roomId (9) times rows (4) + direction index (0 for north)
+	database.UnlockDoor((9 * 4) + 0)
+}
+
 func GenerateKnownMap() template.HTML {
 	//This runs through the map and all rooms showing discovered have their container added to the string.
 	var knownMap strings.Builder
@@ -365,6 +371,14 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 			action.WriteString(`<div class="action"><a class="action" href="/app?action=use"><span class="action">Use Golden Key</span></a></div>`)
 		} else {
 			description.WriteString(`<span class="locked">Locked! The door you tried is locked.<br />Perhaps you can find a key?</span><br />`)
+		}
+	}
+
+	//Once the key is used, we tell the user it worked.
+	if special.Unlocked {
+		//Check if the player has the golden key.
+		if database.DoesUserHaveKey() {
+			description.WriteString(`<span class="unlocked">The key turns and unlocks the door!</span><br />`)
 		}
 	}
 

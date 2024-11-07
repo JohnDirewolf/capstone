@@ -437,6 +437,10 @@ span.locked {
   color: red;
 }
 
+span.unlocked {
+  color: green;
+}
+
 div.action {
   position: absolute;
   top: 650px;

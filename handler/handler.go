@@ -56,6 +56,8 @@ func Game(w http.ResponseWriter, r *http.Request) {
 		move(action, w)
 	case types.Get:
 		get(w)
+	case types.Use:
+		use(w)
 	default:
 		//Unknown action
 		w.Header().Set("Content-Type", "text/plain")
@@ -101,6 +103,11 @@ func move(direction types.UrlAction, w http.ResponseWriter) {
 func get(w http.ResponseWriter) {
 	maze.GetItems()
 	generateRoom(w, types.SpecialStatus{})
+}
+
+func use(w http.ResponseWriter) {
+	maze.UseKey()
+	generateRoom(w, types.SpecialStatus{Unlocked: true})
 }
 
 func generateRoom(w http.ResponseWriter, special types.SpecialStatus) {

@@ -152,6 +152,15 @@ func DoesUserHaveKey() bool {
 	return false
 }
 
+func UnlockDoor(doorId int) error {
+	//There is currently just the one door, but we accept a doorId from maze if we add more locked doors.
+	_, err := heart.Exec("UPDATE doors SET locked=false WHERE id=$1;", doorId)
+	if err != nil {
+		log.Printf("Database, Unlock: Error unlocking door: %v", err)
+	}
+	return err
+}
+
 // ////////// Room functions //////////
 func GetRoom(roomID int) (types.RoomData, error) {
 	var room types.RoomData
