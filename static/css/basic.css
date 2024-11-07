@@ -438,7 +438,7 @@ span.locked {
 }
 
 span.unlocked {
-  color: green;
+  color: limegreen;
 }
 
 div.action {
