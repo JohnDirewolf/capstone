@@ -237,7 +237,7 @@ func Init() {
 	})
 
 	//All items created, so now lock our door(s). Door ideas follow the roomID * 4 plus direction index, north = 0, south = 1, west = 2, east = 3
-	err := database.LockDoor((9*4)+0, 1)
+	err := database.LockDoor((6*4)+0, 1)
 	if err != nil {
 		log.Printf("Maze, Lock: Error locking door: %v", err)
 	}
@@ -317,9 +317,7 @@ func GetItems() {
 }
 
 func UseKey() {
-	//The user is in the correct room and has tried to go through the locked door and has the key to have this action. So unlock the door.
-	//We do send the doorId in case we add more locked doors. Door Id is based on the roomId (9) times rows (4) + direction index (0 for north)
-	database.UnlockDoor((9 * 4) + 0)
+	database.UnlockDoor(playerLocation)
 }
 
 func GenerateKnownMap() template.HTML {

@@ -184,9 +184,20 @@ func DoesUserHaveKey() bool {
 	return false
 }
 
-func UnlockDoor(doorId int) error {
-	//There is currently just the one door, but we accept a doorId from maze if we add more locked doors.
-	_, err := heart.Exec("UPDATE doors SET locked=false WHERE id=$1;", doorId)
+func UnlockDoor(playerLocation int) error {
+	//Get the doors from the player location and get the one that is locked. While we have only 1 locked door,
+	//this generalizes it if we what to change the door or add more locked doors
+	var doorId int
+
+	doorRecord := heart.QueryRow("SELECT id FROM doors WHERE room_id=$1 AND locked=TRUE;", playerLocation)
+	err := doorRecord.Scan(&doorId)
+	if err != nil {
+		log.Printf("Database, UnlockDoor: Error getting locked door in player loction: %v", err)
+		return err
+	}
+
+	//We could make sure the character has the correct key, but currently there is only 1 key and locked door and that logic is decided when the action is given.
+	_, err = heart.Exec("UPDATE doors SET locked=false WHERE id=$1;", doorId)
 	if err != nil {
 		log.Printf("Database, Unlock: Error unlocking door: %v", err)
 	}
