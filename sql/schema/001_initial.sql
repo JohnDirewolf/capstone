@@ -22,6 +22,7 @@ CREATE TABLE doors (
     room_id INTEGER NOT NULL, 
     direction TEXT CHECK (direction IN ('north', 'south', 'west', 'east')),
     locked BOOLEAN NOT NULL DEFAULT false,
+    guarded BOOLEAN NOT NULL DEFAULT false,
     key_id INTEGER NULL,  
     FOREIGN KEY (room_id) REFERENCES rooms(id),
     FOREIGN KEY (key_id) REFERENCES items(id)
@@ -35,8 +36,10 @@ CREATE TABLE creatures (
     is_alive BOOLEAN NOT NULL DEFAULT true,
     vanquished_by INTEGER NULL,
     cur_location INTEGER,
+    guards INTEGER NULL,
     FOREIGN KEY (vanquished_by) REFERENCES items(id),
-    FOREIGN KEY (cur_location) REFERENCES rooms(id)
+    FOREIGN KEY (cur_location) REFERENCES rooms(id),
+    FOREIGN KEY (guards) REFERENCES doors(id)
 );
 
 -- +goose Down

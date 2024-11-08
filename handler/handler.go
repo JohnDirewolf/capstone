@@ -58,6 +58,8 @@ func Game(w http.ResponseWriter, r *http.Request) {
 		get(w)
 	case types.Use:
 		use(w)
+	case types.Attack:
+		attack(w)
 	default:
 		//Unknown action
 		w.Header().Set("Content-Type", "text/plain")
@@ -96,8 +98,7 @@ func end(w http.ResponseWriter) {
 }
 
 func move(direction types.UrlAction, w http.ResponseWriter) {
-	locked := maze.Move(direction)
-	generateRoom(w, types.SpecialStatus{IsLocked: locked})
+	generateRoom(w, maze.Move(direction))
 }
 
 func get(w http.ResponseWriter) {
@@ -110,11 +111,20 @@ func use(w http.ResponseWriter) {
 	generateRoom(w, types.SpecialStatus{Unlocked: true})
 }
 
+func attack(w http.ResponseWriter) {
+	//This checks if the player was successful, if so we continue with the creature dead, otherwise we have a loss screen.
+	if maze.Attack() {
+		generateRoom(w, types.SpecialStatus{Vanquished: true})
+		return
+	}
+	failure(w)
+}
+
 func generateRoom(w http.ResponseWriter, special types.SpecialStatus) {
 	var pageInfo types.PageData
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/maze.html")
 	if err != nil {
-		log.Printf("Handler, Game, move, Error accessing HTML file: %v", err)
+		log.Printf("Handler, generateRoom, Error accessing HTML file: %v", err)
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500: Unable to find page."))
@@ -126,6 +136,27 @@ func generateRoom(w http.ResponseWriter, special types.SpecialStatus) {
 	err = pageTemplate.Execute(w, pageInfo)
 	if err != nil {
 		//Too late to do any real error handling, just log the error.
-		log.Printf("Handler, Game, move, Error executing page: %v", err)
+		log.Printf("Handler, generateRoom, Error executing page: %v", err)
+	}
+}
+
+func failure(w http.ResponseWriter) {
+	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/failure.html")
+	if err != nil {
+		log.Printf("Handler, failure, Error accessing HTML file: %v", err)
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500: Unable to find page."))
+		return
+	}
+
+	pageInfo := types.PageData{
+		Title: "You have died!",
+	}
+
+	err = pageTemplate.Execute(w, pageInfo)
+	if err != nil {
+		//Too late to do any real error handling, just log the error.
+		log.Printf("Handler, failure, Error executing page: %v", err)
 	}
 }

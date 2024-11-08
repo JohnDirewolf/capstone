@@ -26,6 +26,7 @@ type DoorData struct {
 	RoomId    int
 	Direction string
 	Locked    bool
+	Guarded   bool
 	KeyId     sql.NullInt16
 }
 
@@ -52,8 +53,9 @@ type CreatureData struct {
 	Type         string
 	Description  string
 	IsAlive      bool
-	VanquishedBy sql.NullInt16
-	CurLocation  int
+	VanquishedBy sql.NullInt16 //Item ID or Null
+	CurLocation  int           //roomID
+	Guards       sql.NullInt16 //Door ID or Null
 }
 
 type PageData struct {
@@ -67,7 +69,9 @@ type PageData struct {
 }
 
 type SpecialStatus struct {
-	IsStart  bool
-	IsLocked bool
-	Unlocked bool
+	IsStart    bool
+	IsLocked   bool
+	Unlocked   bool
+	IsGuarded  bool
+	Vanquished bool
 }

@@ -13,6 +13,8 @@ const dbURL string = "postgres://postgres:postgres@localhost:5432/game_database?
 
 var heart *sql.DB
 
+// --------------------- Database functions -------------------- //
+// Many database functions return an error but we just log the error and do not catch the error in the calling functions. But the error is there if we do want it.
 func Init() error {
 	var err error
 	heart, err = sql.Open("postgres", dbURL)
@@ -32,13 +34,13 @@ func Init() error {
 }
 
 func Clear() error {
-	_, err := heart.Exec("DELETE FROM doors;")
-	if err != nil {
-		log.Printf("Database, Clear: Error clearing doors: %v", err)
-	}
-	_, err = heart.Exec("DELETE FROM creatures;")
+	_, err := heart.Exec("DELETE FROM creatures;")
 	if err != nil {
 		log.Printf("Database, Clear: Error clearing creatures: %v", err)
+	}
+	_, err = heart.Exec("DELETE FROM doors;")
+	if err != nil {
+		log.Printf("Database, Clear: Error clearing doors: %v", err)
 	}
 	_, err = heart.Exec("DELETE FROM items;")
 	if err != nil {
@@ -49,7 +51,6 @@ func Clear() error {
 		log.Printf("Database, Clear: Error clearing rooms: %v", err)
 	}
 	return err
-
 }
 
 func Close() error {
@@ -70,22 +71,49 @@ func InsertCreature(creatureInfo types.CreatureData) error {
 			description,
 			is_alive,
 			vanquished_by,
-			cur_location
-		) VALUES ($1, $2, $3, $4, $5, $6, $7);`,
+			cur_location,
+			guards
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);`,
 		creatureInfo.Id,
 		creatureInfo.Name,
 		creatureInfo.Type,
 		creatureInfo.Description,
 		creatureInfo.IsAlive,
 		creatureInfo.VanquishedBy,
-		creatureInfo.CurLocation)
+		creatureInfo.CurLocation,
+		creatureInfo.Guards)
 	if err != nil {
 		log.Printf("Database, InsertCreature: Error inserting values for creature: %v", err)
 	}
 	return err
 }
 
-// ////////// Item functions //////////
+func GetCreatureInLocation(location int) types.CreatureData {
+	// Currently a room can only have 1 creature
+	var creature types.CreatureData
+
+	creatureRecord := heart.QueryRow("SELECT id, name, type, description, is_alive, vanquished_by, cur_location, guards FROM creatures WHERE cur_location=$1;", location)
+
+	err := creatureRecord.Scan(&creature.Id, &creature.Name, &creature.Type, &creature.Description, &creature.IsAlive, &creature.VanquishedBy, &creature.CurLocation, &creature.Guards)
+	if err != nil {
+		//ErrNoRows is not a real error, it means there is no creature in the room. We do not log it, we just return the empty creature. Other errors are logged.
+		if err != sql.ErrNoRows {
+			log.Printf("Database, GetCreatureInLocation: Error getting creature information.: %v", err)
+		}
+		return types.CreatureData{}
+	}
+	return creature
+}
+
+func VanquishCreature(creatureId int) error {
+	_, err := heart.Exec("UPDATE creatures SET is_alive=false WHERE id=$1;", creatureId)
+	if err != nil {
+		log.Printf("Database, VanquishCreature: Error vanquishing creature.: %v", err)
+	}
+	return err
+}
+
+// -------------------- Item functions -------------------- //
 func InsertItem(itemInfo types.ItemData) error {
 	_, err := heart.Exec(`
 		INSERT INTO items (
@@ -115,7 +143,7 @@ func GetItemByID(itemID int) (types.ItemData, error) {
 
 	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.Type, &item.CurLocation)
 	if err != nil {
-		log.Printf("Database, GetItem: Error getting data for item: %v", err)
+		log.Printf("Database, GetItemByID: Error getting data for item: %v", err)
 		return types.ItemData{}, err
 	}
 
@@ -129,7 +157,7 @@ func GetItemByName(itemName string) (types.ItemData, error) {
 
 	err := itemRecord.Scan(&item.Id, &item.Name, &item.Article, &item.Description, &item.Type, &item.CurLocation)
 	if err != nil {
-		log.Printf("Database, GetItem: Error getting data for item: %v", err)
+		log.Printf("Database, GetItemByID: Error getting data for item: %v", err)
 		return types.ItemData{}, err
 	}
 
@@ -141,7 +169,7 @@ func GetItemsByLocation(location int) ([]types.ItemData, error) {
 	var item types.ItemData
 	rows, err := heart.Query("SELECT id, name, article, description, type, cur_location FROM items WHERE cur_location=$1;", location)
 	if err != nil {
-		log.Printf("Database, GetItemsByLocation: Error getting list of items: %v", err)
+		log.Printf("Database, GetItemsByLocation: Error getting list of items in locatoin: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -162,28 +190,30 @@ func MoveItemToLocation(itemId int, location int) error {
 	//location -1 is the Player's Inventory.
 	_, err := heart.Exec("UPDATE items SET cur_location=$1 WHERE id=$2;", location, itemId)
 	if err != nil {
-		log.Printf("Database, MoveItemToLocation: Error updating location for item: %v", err)
+		log.Printf("Database, MoveItemToLocation: Error moving item to location: %v", err)
 	}
 	return err
 }
 
-func DoesUserHaveKey() bool {
-	//All this does is check if the user has the Golden Key.
+func DoesUserHaveItem(itemID int) bool {
+	//All this does is check if the user has an item in their inventory.
 	var curLocation int
 
-	keyRecord := heart.QueryRow("SELECT cur_location FROM items WHERE id=1;")
+	itemRecord := heart.QueryRow("SELECT cur_location FROM items WHERE id=$1;", itemID)
 
-	err := keyRecord.Scan(&curLocation)
+	err := itemRecord.Scan(&curLocation)
 	if err != nil {
-		log.Printf("Database, DoesUserHaveKey: Error getting data for key: %v", err)
+		log.Printf("Database, DoesUserHaveItem: Error finding if user has item: %v", err)
 		return false
 	}
+	//Player inventory is room -1
 	if curLocation == -1 {
 		return true
 	}
 	return false
 }
 
+// -------------------- Door functions --------------------- //
 func UnlockDoor(playerLocation int) error {
 	//Get the doors from the player location and get the one that is locked. While we have only 1 locked door,
 	//this generalizes it if we what to change the door or add more locked doors
@@ -199,7 +229,7 @@ func UnlockDoor(playerLocation int) error {
 	//We could make sure the character has the correct key, but currently there is only 1 key and locked door and that logic is decided when the action is given.
 	_, err = heart.Exec("UPDATE doors SET locked=false WHERE id=$1;", doorId)
 	if err != nil {
-		log.Printf("Database, Unlock: Error unlocking door: %v", err)
+		log.Printf("Database, UnlockDoor: Error unlocking door: %v", err)
 	}
 	return err
 }
@@ -209,12 +239,29 @@ func LockDoor(doorId int, keyId int) error {
 	//We set locked to true and also the item_id of the key.
 	_, err := heart.Exec("UPDATE doors SET locked=true, key_id=$1 WHERE id=$2;", keyId, doorId)
 	if err != nil {
-		log.Printf("Database, Lock: Error locking door: %v", err)
+		log.Printf("Database, LockDoor: Error locking door: %v", err)
 	}
 	return err
 }
 
-// ////////// Room functions //////////
+func GuardDoor(doorId int) error {
+	//We set the door the creature is guarding.
+	_, err := heart.Exec("UPDATE doors SET guarded=true WHERE id=$1;", doorId)
+	if err != nil {
+		log.Printf("Database, GuardDoor: Error guarding door: %v", err)
+	}
+	return err
+}
+
+func UnguardDoor(doorId int) error {
+	_, err := heart.Exec("UPDATE doors SET guarded=false WHERE id=$1;", doorId)
+	if err != nil {
+		log.Printf("Database, UnguardDoor: Error unguarding door: %v", err)
+	}
+	return err
+}
+
+// -------------------- Room functions -------------------- //
 func GetRoom(roomID int) (types.RoomData, error) {
 	var room types.RoomData
 	room.Doors = make(map[string]types.DoorData)
@@ -230,9 +277,9 @@ func GetRoom(roomID int) (types.RoomData, error) {
 		return types.RoomData{}, err
 	}
 
-	doorRows, err := heart.Query(`SELECT id, room_id, direction, locked, key_id FROM doors WHERE room_id=$1`, roomID)
+	doorRows, err := heart.Query(`SELECT id, room_id, direction, locked, guarded, key_id FROM doors WHERE room_id=$1`, roomID)
 	for doorRows.Next() {
-		err := doorRows.Scan(&door.Id, &door.RoomId, &door.Direction, &door.Locked, &door.KeyId)
+		err := doorRows.Scan(&door.Id, &door.RoomId, &door.Direction, &door.Locked, &door.Guarded, &door.KeyId)
 		if err != nil {
 			log.Printf("Database, GetRoom: Error getting list of doors: %v", err)
 			return types.RoomData{}, err

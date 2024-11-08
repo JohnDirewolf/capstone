@@ -5,7 +5,6 @@ package maze
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"strings"
 
 	"database/sql"
@@ -15,25 +14,34 @@ import (
 )
 
 // Global variables
-// var theMaze map[int]types.RoomData
 var playerLocation int
+
+const playerInventory int = -1
+
+const (
+	NorthDoor = iota // 0
+	SouthDoor        //1
+	WestDoor         // 2
+	EastDoor         // 3
+)
 
 func Init() {
 	//rest the database to the initial state.
+	//For database functions, while they will often return an err, this is not used here. Errs are simply logged by the function that raises the error, but we return it if we want to use it.
 	//Clear the database
 	database.Clear()
 	var room types.RoomData
 
-	//Room -1 is a container for the user's inventory, this allows items to reference an existing room even if with the player.
+	//Room playerInventory (-1) is a container for the user's inventory, this allows items to reference an existing room even if with the player.
 	room = types.RoomData{
-		Id:          -1,
+		Id:          playerInventory,
 		Title:       "Player Inventory",
 		Description: "Items the Player has in their inventory",
 		Discovered:  false,
 	}
 	database.InsertRoom(room)
 
-	//Set up rooms to initial state and the room's doors, but all doors are unlocked. Locks reference key items and so after the items are created we lock the doors (currently 1) we want locked.
+	//Set up rooms to initial state and the room's doors, but all doors are unlocked. Locks reference key items and so after the items are created we lock the door(s) we want locked.
 	room = types.RoomData{
 		Id:          0,
 		Title:       "Bark Room",
@@ -41,7 +49,7 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -51,9 +59,9 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -63,9 +71,9 @@ func Init() {
 		Discovered:  true,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -75,8 +83,8 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -86,8 +94,8 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -97,20 +105,20 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
 		Id:          6,
 		Title:       "Oil Room",
-		Description: "The air is hard to breath here as the room is knee deep in black oil. Wading through the room you find doors to the North and South.",
+		Description: "The air is hard to breath here as the room is knee deep in black oil. Wading through the room you find doors to the North and South. The Northern door is covered in gold inlay.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -120,7 +128,7 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -130,18 +138,18 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
 		Id:          9,
 		Title:       "Boil Room",
-		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South. The Northern door is covered in gold inlay.",
+		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -151,9 +159,9 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -163,18 +171,18 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + 0, RoomId: room.Id, Direction: "north", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["north"] = types.DoorData{Id: (room.Id * 4) + NorthDoor, RoomId: room.Id, Direction: "north"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
 		Id:          12,
 		Title:       "Copper Room - Goal!",
-		Description: "Huzzah! Entering this room made of copper and metal you see a large portal open, and show the way out. You can go back to the maze to the East.",
+		Description: "Huzzah! Entering this room made of copper and metal you see a large portal open. The way out! You can go back to the maze to the East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -184,9 +192,9 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
-	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + 3, RoomId: room.Id, Direction: "east", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
+	room.Doors["east"] = types.DoorData{Id: (room.Id * 4) + EastDoor, RoomId: room.Id, Direction: "east"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -196,7 +204,7 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + 2, RoomId: room.Id, Direction: "west", Locked: false}
+	room.Doors["west"] = types.DoorData{Id: (room.Id * 4) + WestDoor, RoomId: room.Id, Direction: "west"}
 	database.InsertRoom(room)
 
 	room = types.RoomData{
@@ -206,7 +214,7 @@ func Init() {
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
-	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + 1, RoomId: room.Id, Direction: "south", Locked: false}
+	room.Doors["south"] = types.DoorData{Id: (room.Id * 4) + SouthDoor, RoomId: room.Id, Direction: "south"}
 	database.InsertRoom(room)
 
 	//Add items.
@@ -226,93 +234,73 @@ func Init() {
 		Type:        "sword",
 		CurLocation: 15,
 	})
-	//This sets up a lucky coin in the player's default inventory as item 0. Player inventory is location "-1"
+	//This sets up a lucky coin in the player's default inventory as item 0. It's not used in the maze.
 	database.InsertItem(types.ItemData{
 		Id:          0,
 		Name:        "Lucky Coin",
 		Article:     "a ",
 		Description: "A ancient coin you found long ago and you feel has brought you luck.",
 		Type:        "coin",
-		CurLocation: -1,
+		CurLocation: playerInventory,
 	})
 
-	//All items created, so now lock our door(s). Door ideas follow the roomID * 4 plus direction index, north = 0, south = 1, west = 2, east = 3
-	err := database.LockDoor((6*4)+0, 1)
-	if err != nil {
-		log.Printf("Maze, Lock: Error locking door: %v", err)
-	}
+	//All items created, so now lock our door(s).
+	database.LockDoor((6*4)+NorthDoor, 1)
 
+	//Creatures have a description that is a sentence used to describe the character and what they are doing.
 	database.InsertCreature(types.CreatureData{
 		Id:           1,
 		Name:         "Wartz",
-		Type:         "Goblin",
-		Description:  "A powerful looking goblin with a huge club.",
+		Type:         "goblin",
+		Description:  "A powerful looking goblin with a huge club is guarding the bridge.",
 		IsAlive:      true,
 		VanquishedBy: sql.NullInt16{Int16: 2, Valid: true},
-		CurLocation:  13,
+		CurLocation:  9,
+		Guards:       sql.NullInt16{Int16: (9 * 4) + NorthDoor, Valid: true},
 	})
+	//Set the door they are guarding
+	database.GuardDoor((9 * 4) + NorthDoor)
 
 	//Set player location to starting room, 2
 	playerLocation = 2
 }
 
-func Move(direction types.UrlAction) bool {
+func Move(direction types.UrlAction) types.SpecialStatus {
 	//Each direction changes the playerLocation by a different value. If there is no direction, then playerLocation does not change.
-	var lockedDoor bool
+	var special types.SpecialStatus
 	//Get a RoomData from the Database
-	room, err := database.GetRoom(playerLocation)
-	if err != nil {
-		log.Printf("Maze, Move, Error getting room: %v\n", err)
-	}
-
-	switch direction {
-	case types.North:
-		if doorData, ok := room.Doors[string(types.North)]; ok {
-			if doorData.Locked {
-				lockedDoor = true
-			} else {
+	room, _ := database.GetRoom(playerLocation)
+	//Check for locked or guarded doors.
+	if doorData, ok := room.Doors[string(direction)]; ok {
+		if doorData.Locked {
+			special.IsLocked = true
+		} else if doorData.Guarded {
+			special.IsGuarded = true
+		} else {
+			switch direction {
+			case types.North:
 				playerLocation += 4
-			}
-		}
-	case types.South:
-		if doorData, ok := room.Doors[string(types.South)]; ok {
-			if doorData.Locked {
-				lockedDoor = true
-			} else {
+			case types.South:
 				playerLocation -= 4
-			}
-		}
-	case types.West:
-		if doorData, ok := room.Doors[string(types.West)]; ok {
-			if doorData.Locked {
-				lockedDoor = true
-			} else {
+			case types.West:
 				playerLocation -= 1
-			}
-		}
-	case types.East:
-		if doorData, ok := room.Doors[string(types.East)]; ok {
-			if doorData.Locked {
-				lockedDoor = true
-			} else {
+			case types.East:
 				playerLocation += 1
 			}
 		}
 	}
+
 	//This sets the room the player is in to discovered, regardless if the player moved or not.
 	database.DiscoverRoom(playerLocation)
 
-	return lockedDoor
+	return special
 }
 
 func GetItems() {
 	//move all the items from the room into the player's inventory.
-	itemList, err := database.GetItemsByLocation(playerLocation)
-	if err != nil {
-		log.Printf("Maze, GetItems, Error getting list of items in room: %v\n", err)
-	}
+	itemList, _ := database.GetItemsByLocation(playerLocation)
 	for _, item := range itemList {
-		database.MoveItemToLocation(item.Id, -1)
+		database.MoveItemToLocation(item.Id, playerInventory)
 	}
 }
 
@@ -320,13 +308,27 @@ func UseKey() {
 	database.UnlockDoor(playerLocation)
 }
 
+func Attack() bool {
+	//Check if the player has the proper vanquishing item for the creatures, if not they are defeated
+	//Get the current creature from the player's Location
+	creatureInfo := database.GetCreatureInLocation(playerLocation)
+	//Check if the player has the vanquishing item and return result
+	if database.DoesUserHaveItem(int(creatureInfo.VanquishedBy.Int16)) {
+		//Player has the item and defeats the creature, set to vanquished and unguard the door.
+		database.VanquishCreature(creatureInfo.Id)
+		//If the creature is guarding a door, unguard it. (For if we have a creature that is just a foe but not a guard, currently there is only the goblin guard.)
+		if creatureInfo.Guards.Valid {
+			database.UnguardDoor(int(creatureInfo.Guards.Int16))
+		}
+		return true
+	}
+	return false
+}
+
 func GenerateKnownMap() template.HTML {
 	//This runs through the map and all rooms showing discovered have their container added to the string.
 	var knownMap strings.Builder
-	roomsDiscovered, err := database.GetDiscoveredRooms()
-	if err != nil {
-		log.Printf("Maze, GenerateKnownMap, Error getting list of discovered rooms: %v\n", err)
-	}
+	roomsDiscovered, _ := database.GetDiscoveredRooms()
 	for _, roomID := range roomsDiscovered {
 		fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.png' alt='Maze Room' width='200' height='200' /></div>\n", roomID, roomID)
 	}
@@ -344,11 +346,8 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 	var description strings.Builder
 	var action strings.Builder
 	var instructions template.HTML
-	room, err := database.GetRoom(playerLocation)
+	room, _ := database.GetRoom(playerLocation)
 	//log.Printf("Room returned to GenerateCompass is: %v", room)
-	if err != nil {
-		log.Printf("Maze, GenerateCompass, Error getting room: %v\n", err)
-	}
 	if _, ok := room.Doors["north"]; ok {
 		compass.WriteString(`<div class="n-arrow"><a href="/app?action=north"><img class="n-arrow" src="/assets/images/green_arrow_n.png" alt="Green Arrow North" width="100" height="100" /></a></div>`)
 	} else {
@@ -370,11 +369,8 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 		compass.WriteString(`<div class="e-arrow"><img class="e-arrow" src="/assets/images/red_arrow_e.png" alt="Red Arrow East" width="100" height="100" /></div>`)
 	}
 
-	//Show character inventory (Location -1)
-	itemsInInventory, err := database.GetItemsByLocation(-1)
-	if err != nil {
-		log.Printf("Maze, GetePageInfo, Error getting inventory items: %v\n", err)
-	}
+	//Show player's Inventory.
+	itemsInInventory, _ := database.GetItemsByLocation(playerInventory)
 	for index, item := range itemsInInventory {
 		if index >= 1 {
 			inventory.WriteString("<br />")
@@ -393,7 +389,7 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 	//If we are in a room with a locked door (room 9) then check if the user has the key (1) and either add acton to use key or tell them the door is locked
 	if special.IsLocked {
 		//Check if the player has the golden key.
-		if database.DoesUserHaveKey() {
+		if database.DoesUserHaveItem(1) {
 			description.WriteString(`<span class="locked">Locked! Try the key!</span><br />`)
 			//Add use action
 			action.WriteString(`<div class="action"><a class="action" href="/app?action=use"><span class="action">Use Golden Key</span></a></div>`)
@@ -404,20 +400,22 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 
 	//Once the key is used, we tell the user it worked.
 	if special.Unlocked {
-		//Check if the player has the golden key.
-		if database.DoesUserHaveKey() {
-			description.WriteString(`<span class="unlocked">The key turns and unlocks the door!</span><br />`)
-		}
+		description.WriteString(`<span class="unlocked">The key turns and unlocks the door!</span><br />`)
+	}
+
+	if special.IsGuarded {
+		fmt.Fprintf(&description, `<span class="warning">Your foe blocks your path!</span><br />`)
+	}
+
+	if special.Vanquished {
+		description.WriteString(`<span class="vanquished">You vanquished your foe!</span><br />`)
 	}
 
 	//Get The basic room Description
 	description.WriteString(room.Description)
 
 	//Checking for items in the room. If there are item(s) in the room we add an action, get item, and the item(s) are added to the description.
-	itemsInLocation, err := database.GetItemsByLocation(playerLocation)
-	if err != nil {
-		log.Printf("Maze, GetePageInfo, Error getting room items: %v\n", err)
-	}
+	itemsInLocation, _ := database.GetItemsByLocation(playerLocation)
 	if len(itemsInLocation) >= 1 {
 		description.WriteString("<br />In the room you see: ")
 		for index, item := range itemsInLocation {
@@ -438,6 +436,23 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 			action.WriteString(`Get all items.`)
 		}
 		action.WriteString(`</span></a></div>`)
+	}
+
+	//Checking for creature in the room. If there is a creature in the room we add an action, and add the creature descrition and room sepcific information to the description.
+	creature := database.GetCreatureInLocation(playerLocation)
+	if (creature != types.CreatureData{}) {
+		//First check if the creature is already dead, skip and say so.
+		if creature.IsAlive {
+			fmt.Fprintf(&description, "<br />%s", creature.Description)
+			//If the player does not have the ability to vanquish the creature, warn them. But they can still attack.
+			if !database.DoesUserHaveItem(int(creature.VanquishedBy.Int16)) {
+				fmt.Fprintf(&description, `<br /><span class="warning">Careful! You may not be able to vanquish the %s!</span>`, creature.Type)
+			}
+			//Action to attack items
+			fmt.Fprintf(&action, `<div class="action"><a class="action" href="/app?action=attack"><span class="action">Attack the %s!</span></a></div>`, creature.Type)
+		} else {
+			fmt.Fprintf(&description, "<br />You see a dead %s here.", creature.Type)
+		}
 	}
 
 	pageData := types.PageData{

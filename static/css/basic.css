@@ -26,12 +26,19 @@ a:visited {
   text-decoration: none;
 }
 
-/*h1 is used for the Capstone Project title*/
+/*h1 is used for the Capstone Project title and the failure screen*/
 h1 {
   color: red;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 24px;
   text-align: center;
+}
+
+h1.title {
+  font-size: 24px;
+}
+
+h1.dead {
+  font-size: 32px;
 }
 
 /* h2 is used for the project title */
@@ -411,10 +418,10 @@ p.inventory {
 /*Room description */
 div.description {
   position: absolute;
-  top: 410px;
+  top: 360px;
   left: 910px;
   width: 600px;
-  height: 200px;
+  height: 300px;
   background-color: transparent;
 }
 
@@ -441,13 +448,21 @@ span.unlocked {
   color: limegreen;
 }
 
+span.warning {
+  color: red;
+}
+
+span.vanquished {
+  color: limegreen;
+}
+
 div.action {
   position: absolute;
-  top: 650px;
+  top: 700px;
   left: 1010px;
-  width: 300px;
+  width: 400px;
   height: 50px;
-  background-color: black;
+  background-color: trasparent;
 }
 
 a.action {
@@ -472,4 +487,5 @@ span.action {
   font-family: 'Courier New', Courier, monospace;
   font-size: 28px;
   font-weight: bold;
+  background-color: transparent;
 }
