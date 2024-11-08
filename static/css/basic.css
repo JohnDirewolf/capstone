@@ -30,6 +30,7 @@ a:visited {
 h1 {
   color: red;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 24px;
   text-align: center;
 }
 
@@ -41,12 +42,21 @@ h1.dead {
   font-size: 32px;
 }
 
+h1.end {
+  color: yellow;
+  font-size: 32px;
+}
+
 /* h2 is used for the project title */
 h2 {
   color: blue;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 18px;
   text-align: center;
+}
+
+h2 {
+  font-size: 24px;
 }
 
 /*h3 is the main page description*/
@@ -488,4 +498,21 @@ span.action {
   font-size: 28px;
   font-weight: bold;
   background-color: transparent;
+}
+
+div.end {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1500px;
+  height: 800px;
+  background-size: 600px 600px;
+  background-repeat: no-repeat;
+  background-image: url("/assets/images/end.png");
+  background-color: gold;
+  border-top: 3px solid yellow;
+  border-bottom: 3px solid goldenrod;
+  border-left: 3px solid yellow;
+  border-right: 3px solid goldenrod;
 }

@@ -77,8 +77,8 @@ func start(w http.ResponseWriter) {
 }
 
 func end(w http.ResponseWriter) {
-	startPageData := types.PageData{
-		Title: "Maze Runner End!",
+	endPageData := types.PageData{
+		Title: "You made it out!",
 	}
 
 	pageTemplate, err := template.ParseFiles("templates/shared/base.html", "templates/shared/header.html", "templates/end.html")
@@ -90,7 +90,7 @@ func end(w http.ResponseWriter) {
 		return
 	}
 
-	err = pageTemplate.Execute(w, startPageData)
+	err = pageTemplate.Execute(w, endPageData)
 	if err != nil {
 		//Too late to do any real error handling, just log the error.
 		log.Printf("Handler, Game, end, Error executing page: %v", err)

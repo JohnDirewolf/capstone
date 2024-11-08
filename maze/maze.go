@@ -16,7 +16,12 @@ import (
 // Global variables
 var playerLocation int
 
-const playerInventory int = -1
+// These are room constants for the player inventory, start room and goal room.
+const (
+	playerInventory = -1
+	StartRoom       = 2
+	GoalRoom        = 12
+)
 
 const (
 	NorthDoor = iota // 0
@@ -261,8 +266,8 @@ func Init() {
 	//Set the door they are guarding
 	database.GuardDoor((9 * 4) + NorthDoor)
 
-	//Set player location to starting room, 2
-	playerLocation = 2
+	//Set player location to starting room
+	playerLocation = StartRoom
 }
 
 func Move(direction types.UrlAction) types.SpecialStatus {
@@ -453,6 +458,11 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 		} else {
 			fmt.Fprintf(&description, "<br />You see a dead %s here.", creature.Type)
 		}
+	}
+
+	//If we are in the exit room we have an action to escape the maze.
+	if playerLocation == GoalRoom {
+		action.WriteString(`<div class="action"><a class="action" href="/app?action=end"><span class="action">Escape the Maze!</span></a></div>`)
 	}
 
 	pageData := types.PageData{
