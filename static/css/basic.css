@@ -42,21 +42,12 @@ h1.dead {
   font-size: 32px;
 }
 
-h1.end {
-  color: yellow;
-  font-size: 32px;
-}
-
 /* h2 is used for the project title */
 h2 {
   color: blue;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 18px;
   text-align: center;
-}
-
-h2 {
-  font-size: 24px;
 }
 
 /*h3 is the main page description*/
@@ -95,17 +86,19 @@ p {
 div.instructions {
   position: absolute;
   top: 70px;
-  left: 900px;
+  left: 875px;
+  height:75px;
+  width:300px;
   z-index:2;
   background-color: black;
 }
 
 p.instructions {
-  height:125px;
-  width:300px;
+  height:100%;
+  width:100%;
   color: white;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   display: flex;
   text-align: center;
   align-items: center;
@@ -294,6 +287,7 @@ div.return {
   height: 90px;
   top: 105px;
   left: 105px;
+  background-image: url("/assets/images/compass_center.png");
   background-color: transparent;
 }
 
@@ -302,11 +296,6 @@ a.return {
   width: 90px;
   height: 90px;
   box-sizing: border-box;
-  background-color: gold;
-  border-top: 3px solid yellow;
-  border-bottom: 3px solid goldenrod;
-  border-left: 3px solid yellow;
-  border-right: 3px solid goldenrod;
 }
 
 span.return {
@@ -316,8 +305,9 @@ span.return {
   text-align:center;
   align-items: center;
   justify-content: center;
+  color: white;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
 }
 
@@ -469,9 +459,10 @@ span.vanquished {
 div.action {
   position: absolute;
   top: 700px;
-  left: 1010px;
-  width: 400px;
-  height: 50px;
+  left: 910px;
+  width: 500px;
+  height: 75px;
+  background-image: url("/assets/images/action.png");
   background-color: trasparent;
 }
 
@@ -480,11 +471,6 @@ a.action {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  background-color: gold;
-  border-top: 3px solid yellow;
-  border-bottom: 3px solid goldenrod;
-  border-left: 3px solid yellow;
-  border-right: 3px solid goldenrod;
 }
 
 span.action {
@@ -500,6 +486,27 @@ span.action {
   background-color: transparent;
 }
 
+h1.end {
+  color: yellow;
+  font-size: 32px;
+}
+
+h2.end {
+  font-size: 24px;
+}
+
+p.end {
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 28px;
+  
+  background-color: transparent;
+}
+
+a.end {
+  color: white;
+}
+
 div.end {
   position: absolute;
   top: 50%;
@@ -507,12 +514,27 @@ div.end {
   transform: translate(-50%, -50%);
   width: 1500px;
   height: 800px;
-  background-size: 600px 600px;
-  background-repeat: no-repeat;
-  background-image: url("/assets/images/end.png");
-  background-color: gold;
-  border-top: 3px solid yellow;
-  border-bottom: 3px solid goldenrod;
-  border-left: 3px solid yellow;
-  border-right: 3px solid goldenrod;
+  background-color: black;
+  border-top: 3px solid grey;
+  border-bottom: 3px solid dimgrey;
+  border-left: 3px solid grey;
+  border-right: 3px solid dimgrey;
+  z-index: 1;
+}
+
+div.end-text {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  z-index: 3;
+}
+
+div.end-img {
+  position: absolute;
+  top: 100px;
+  left: 450px;
+  width: 600px;
+  height: 600px;
+  background-color: transparent;
+  z-index: 2;
 }

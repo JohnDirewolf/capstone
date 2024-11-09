@@ -338,10 +338,10 @@ func GenerateKnownMap() template.HTML {
 		fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.png' alt='Maze Room' width='200' height='200' /></div>\n", roomID, roomID)
 	}
 	//Add the Player
-	playerLocationTop := ((15 - playerLocation) / 4) * 200
-	playerLocationLeft := (playerLocation % 4) * 200
+	playerLocationTop := (((15 - playerLocation) / 4) * 200) + 25
+	playerLocationLeft := ((playerLocation % 4) * 200) + 66
 	//log.Printf("playerLocationLeft: %d", playerLocationLeft)
-	fmt.Fprintf(&knownMap, "<div style='position:absolute;top:%dpx;left:%dpx'><img src='/assets/images/player.png' alt='Player!' width='200' height='200' /></div>\n", playerLocationTop, playerLocationLeft)
+	fmt.Fprintf(&knownMap, "<div style='position:absolute;top:%dpx;left:%dpx'><img src='/assets/images/player.png' alt='Player!' width='67' height='150' /></div>\n", playerLocationTop, playerLocationLeft)
 	return template.HTML(knownMap.String())
 }
 
@@ -454,7 +454,7 @@ func GetPageInfo(special types.SpecialStatus) types.PageData {
 				fmt.Fprintf(&description, `<br /><span class="warning">Careful! You may not be able to vanquish the %s!</span>`, creature.Type)
 			}
 			//Action to attack items
-			fmt.Fprintf(&action, `<div class="action"><a class="action" href="/app?action=attack"><span class="action">Attack the %s!</span></a></div>`, creature.Type)
+			fmt.Fprintf(&action, `<div class="action"><a class="action" href="/app?action=attack"><span class="action">Attack %s!</span></a></div>`, creature.Type)
 		} else {
 			fmt.Fprintf(&description, "<br />You see a dead %s here.", creature.Type)
 		}
