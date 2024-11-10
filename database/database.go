@@ -3,13 +3,15 @@ package database
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	"github.com/JohnDirewolf/capstone/shared/types"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-const dbURL string = "postgres://postgres:postgres@localhost:5432/game_database?sslmode=disable"
+var dbURL string
 
 var heart *sql.DB
 
@@ -17,6 +19,11 @@ var heart *sql.DB
 // Many database functions return an error but we just log the error and do not catch the error in the calling functions. But the error is there if we do want it.
 func Init() error {
 	var err error
+
+	//Get the database connection string from .env
+	godotenv.Load()
+	dbURL := os.Getenv("DB_URL")
+
 	heart, err = sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Printf("Database, Init: Error in connecting to database: %v", err)

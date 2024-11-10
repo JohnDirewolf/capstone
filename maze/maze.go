@@ -49,8 +49,8 @@ func Init() {
 	//Set up rooms to initial state and the room's doors, but all doors are unlocked. Locks reference key items and so after the items are created we lock the door(s) we want locked.
 	room = types.RoomData{
 		Id:          0,
-		Title:       "Bark Room",
-		Description: "The room is covered in various types of tree bark. The smell is musky. The only exist is the way you entered to the East.",
+		Title:       "Mush Room",
+		Description: "The floor of this musty smelling room is covered dirt. Throughout the room you see huge mushrooms of various colors. The only exit is where you entered to the East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -60,7 +60,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          1,
 		Title:       "Leaf Room",
-		Description: "You find a room overgrown with leaves. Pushing through the folliage you find exits to the North, West, and East.",
+		Description: "The twisted path that branch here is covered in old and decaying leaves. You are not sure where the leaves come from but they crunch under your feet as you walk through the room. You find exits to the North, West, and East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -72,7 +72,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          2,
 		Title:       "Stone Room",
-		Description: "You are in a room made of cleaved stones. You see doors to the North, West, and East.",
+		Description: "You are in a room made of giant hewn stones. You see doors to the North, West, and East.",
 		Discovered:  true,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -83,8 +83,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          3,
-		Title:       "Grass Room",
-		Description: "This room is filled with grass and smells natural and clean. You can make out doors to the North and West.",
+		Title:       "Cobblestone Room",
+		Description: "The floor of this room is made of countless cobblestones with tufts of weeds poking up here and there. Peering around the corner you see doors North and West.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -95,7 +95,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          4,
 		Title:       "Dirt Room",
-		Description: "You enter a room that is empty, the foor being ony dirt. There are exits to the North and East.",
+		Description: "You enter a winding corridor. The path is dirt with a few stones. Exploring you find exits North and East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -105,8 +105,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          5,
-		Title:       "Water Room",
-		Description: "As you enter you fall into a pool of warm water. Swimming about you find exits to the North, South and West.",
+		Title:       "Underground River",
+		Description: "As you enter you almost fall into flowing river of warm water. Standing on a stone outcropping you see exits to the North, South and West, although you may need to swim.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -118,7 +118,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          6,
 		Title:       "Oil Room",
-		Description: "The air is hard to breath here as the room is knee deep in black oil. Wading through the room you find doors to the North and South. The Northern door is covered in gold inlay.",
+		Description: "The air is hard to breath here as the room is mostly filled with black oil. A cobblestone path allows you to cross the room. You see doors to the North and South. The Northern door is covered in gold inlay.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -129,7 +129,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          7,
 		Title:       "Wood Room",
-		Description: "All around is worked wood creating a cosy cabin feel. There is only a door to the South.",
+		Description: "This room has a wood plank floor, old and weathered giving an earthy, smokey smell. Around a bend you find a dead end with a mural of cut wood showing someone with an impressive hat entering the dungeon. The only door is to the South.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -138,8 +138,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          8,
-		Title:       "Lava Room",
-		Description: "The heat in this room is nearly unbarable as the floor is mostly lava. There seems to be no way forward, only the exit to the South.",
+		Title:       "Key Room",
+		Description: "This area has the feel of a temple. Finely cut marble make up the room and pillars. A set of stairs up to a small alcove where you find a treasure chest. The only exit is to the South.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -149,7 +149,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          9,
 		Title:       "Boil Room",
-		Description: "The air is full of steam and the sound of roiling water. A simple bridge over the boiling water allows exit to the North and South.",
+		Description: "The air is full of heat and steam as the room is filled with a pool of boiling water. An old decaying bridge offers a tenuous crossing over the boiling water to doors in the North and South.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -160,7 +160,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          10,
 		Title:       "Mud Room",
-		Description: "You find a huge expanse of cracked mud, desperate for water. You can see exits South and East.",
+		Description: "This room is covered in mud. While most is wet and thick you find a dried path that allows you to access the doors to the South and East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -171,8 +171,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          11,
-		Title:       "Rust Room",
-		Description: "There is the sound of clanking metals and steam flowing through old pipes in this room filed with rusted machinery. There are doors to the North and West.",
+		Title:       "Finished Stone Room",
+		Description: "Unlike most of the dungeon, this room is made of square finished stone. Your boots clumping loudly as you follow the twists and turns. You feel warmth from the North. There are doors to the North and West.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -182,8 +182,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          12,
-		Title:       "Copper Room - Goal!",
-		Description: "Huzzah! Entering this room made of copper and metal you see a large portal open. The way out! You can go back to the maze to the East.",
+		Title:       "Treasure Room - Goal!",
+		Description: "Huzzah! Entering this room you see a pile of gold and treasure taller then you are! The room is all shimmering and glitter. But you also see through a stone arch, the way out! You leave the dungeon or can go back to the maze to the East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -192,8 +192,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          13,
-		Title:       "Gold Room",
-		Description: "The room glitters with gold in all shapes and sizes, then you realize it is just fool's gold. You see doors through the faux horde to the South, West and East.",
+		Title:       "Metal Pipe Room",
+		Description: "This strange room has no floor, instead it seems like a bottomless pit. Connecting the door are large pipes made of some strange metal. You can carefully navigate the pipe path to the South, West and East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -205,7 +205,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          14,
 		Title:       "Magma Room",
-		Description: "A powerful heat radiates from this room, magma slowly shifing. There is no other exit then the door you came in to the West.",
+		Description: "A powerful heat radiates from this room. The path ends in a river of magma slowly flowing across the room. There are no other exits then the door you came in to the West.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -214,8 +214,8 @@ func Init() {
 
 	room = types.RoomData{
 		Id:          15,
-		Title:       "Granite Room",
-		Description: "You enter a quarry of granite and stone. You only see a door back South.",
+		Title:       "Sword Room",
+		Description: "You enter the room and a rush of hot air greets you. Within you see a pool of lava, with a path of marble with a dais rising out of it with a hexagonal pedestal. You only see a door back South.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
@@ -227,7 +227,7 @@ func Init() {
 		Id:          1,
 		Name:        "Golden Key",
 		Article:     "a ",
-		Description: "A delicate golden ward key with a ruby in the bow.",
+		Description: "In the chest is a delicate golden warded key with a ruby in the bow.",
 		Type:        "key",
 		CurLocation: 8,
 	})
@@ -235,7 +235,7 @@ func Init() {
 		Id:          2,
 		Name:        "Magic Sword",
 		Article:     "a ",
-		Description: "A sword that glows blue. Along the blad are runes that says \"Goblin Scourge\"",
+		Description: "Upon the pedestal, a sword that glows blue. Along the blade are runes that says \"Goblin Scourge\"",
 		Type:        "sword",
 		CurLocation: 15,
 	})
