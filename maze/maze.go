@@ -183,7 +183,7 @@ func Init() {
 	room = types.RoomData{
 		Id:          12,
 		Title:       "Treasure Room - Goal!",
-		Description: "Huzzah! Entering this room you see a pile of gold and treasure taller then you are! The room is all shimmering and glitter. But you also see through a stone arch, the way out! You leave the dungeon or can go back to the maze to the East.",
+		Description: "Huzzah! Entering this room you see a pile of gold and treasure taller then you are! The room is all shimmering and glitter. But you also see through a stone arch, the way out! You leave the dungeon or can go back into the maze to the East.",
 		Discovered:  false,
 		Doors:       make(map[string]types.DoorData),
 	}
