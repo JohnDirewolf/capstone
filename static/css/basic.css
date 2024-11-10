@@ -61,6 +61,7 @@ h2 {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 48px;
   text-align: center;
+  text-shadow: 2px 2px 4px black;
 }
 
 /*h3 is the main page description*/
@@ -514,6 +515,28 @@ span.action {
   font-family: 'Courier New', Courier, monospace;
   font-size: 28px;
   font-weight: bold;
+  background-color: transparent;
+}
+
+div.grave {
+  position: absolute;
+  top: 150px;
+  left: 650px;
+  width: 600px;
+  height: 600px;
+  background-color: transparent;
+}
+
+div.failure {
+  display: flex;
+  position: absolute;
+  top: 650px;
+  margin-top: 0px;
+  height:75px;
+  width:100%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
 }
 
