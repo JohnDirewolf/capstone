@@ -1,8 +1,12 @@
 # Boot.dev Capstone Project
 
 ## Description
-This is a fantasy web based game. You explore the "Hatrock Dungeon" finding a magic key and a magic sword to defeat a goblin and escape the dungeon's maze. 
-It is the Capstone Project for the Boot.dev developers course.
+This is an example of Go programming a server and database driven program as a very simple fantasy web based game. 
+In the game you explore the "Hatrock Dungeon" finding a magic key and a magic sword to defeat a goblin and escape the dungeon's maze. 
+This program creates a local server using ServeMux as a file server and handler for game actions.
+A PostgreSQL database is then used to store game data.
+All art assets were created by myself.
+This is my Capstone Project for the Boot.dev back-end developers course.
 
 ## Installation & Setup
 

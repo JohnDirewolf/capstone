@@ -338,10 +338,10 @@ func GenerateKnownMap() template.HTML {
 		fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.jpg' alt='Maze Room' width='200' height='200' /></div>\n", roomID, roomID)
 	}
 	//Add the Player
-	playerLocationTop := (((15 - playerLocation) / 4) * 200) + 25
-	playerLocationLeft := ((playerLocation % 4) * 200) + 66
+	playerLocationTop := (((15 - playerLocation) / 4) * 200) + 62
+	playerLocationLeft := ((playerLocation % 4) * 200) + 83
 	//log.Printf("playerLocationLeft: %d", playerLocationLeft)
-	fmt.Fprintf(&knownMap, "<div style='position:absolute;top:%dpx;left:%dpx'><img src='/assets/images/player.png' alt='Player!' width='67' height='150' /></div>\n", playerLocationTop, playerLocationLeft)
+	fmt.Fprintf(&knownMap, "<div style='position:absolute;top:%dpx;left:%dpx'><img src='/assets/images/player.png' alt='Player!' width='34' height='75' /></div>\n", playerLocationTop, playerLocationLeft)
 	return template.HTML(knownMap.String())
 }
 
