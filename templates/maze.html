@@ -1,8 +1,8 @@
 <!-- maze.html -->
 {{define "body"}}
-    <h4>{{.Title}}</h4>
     {{.Instructions}}
     <div class="main">
+        <h4>{{.Title}}</h4>
         <div class="maze">
             {{.Rooms}}
         </div>
@@ -13,6 +13,7 @@
             </div>
         </div>
         <div class="inventory">
+            <img class="inventory" src="/assets/images/bag.png" height="75" width="100" />
             <p class="inventory-title">Inventory</p>
             <p class="inventory">{{.Inventory}}</p>
         </div>

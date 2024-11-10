@@ -335,7 +335,7 @@ func GenerateKnownMap() template.HTML {
 	var knownMap strings.Builder
 	roomsDiscovered, _ := database.GetDiscoveredRooms()
 	for _, roomID := range roomsDiscovered {
-		fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.png' alt='Maze Room' width='200' height='200' /></div>\n", roomID, roomID)
+		fmt.Fprintf(&knownMap, "<div class='room%d'><img src='/assets/images/r%d.jpg' alt='Maze Room' width='200' height='200' /></div>\n", roomID, roomID)
 	}
 	//Add the Player
 	playerLocationTop := (((15 - playerLocation) / 4) * 200) + 25
