@@ -65,3 +65,30 @@ Example format explanation:
 
 4. Save the file (in nano: Ctrl + O, then Ctrl + X to exit)
 
+## Set up the database 'game_database' in PostgreSQL
+1. Open your terminal and connect to PostgreSQL:
+
+   ```bash
+   psql -U your-username
+   ```
+
+2. Create the database by running:
+   ```sql
+   CREATE DATABASE game_database;
+   ```
+
+3. Exit the PostgreSQL prompt:
+   ```sql
+   \q
+   ```
+
+### Run Goose Migration to set up the database:
+1. Install Goose if needed. In your terminal run:
+   ```bash
+   go install github.com/pressly/goose/v3/cmd/goose@latest
+   ```
+
+2. Use the connection string you set up in a Goose migration command in the root directory for this program:
+   ```bash
+   goose -dir sql/schema ppostgres://<username>:<password>@<host>:<port>/game_database up
+   ```
