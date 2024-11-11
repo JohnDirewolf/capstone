@@ -54,7 +54,7 @@ To install PostgreSQL on Ubuntu, run the following commands in your terminal:
 
 3. Update the DB_URL variable with your PostgreSQL connection string:
 
-postgres://<username>:<password>@<host>:<port>/<database_name>?sslmode=disable
+postgres://<username>:<password>@<host>:<port>
 
 Example format explanation:
 - username: your PostgreSQL username

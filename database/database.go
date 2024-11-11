@@ -13,6 +13,8 @@ import (
 
 var dbURL string
 
+const dbURLSuffix string = "/game_database?sslmode=disable"
+
 var heart *sql.DB
 
 // --------------------- Database functions -------------------- //
@@ -24,7 +26,7 @@ func Init() error {
 	godotenv.Load()
 	dbURL := os.Getenv("DB_URL")
 
-	heart, err = sql.Open("postgres", dbURL)
+	heart, err = sql.Open("postgres", dbURL+dbURLSuffix)
 	if err != nil {
 		log.Printf("Database, Init: Error in connecting to database: %v", err)
 		return err
