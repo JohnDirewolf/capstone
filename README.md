@@ -7,7 +7,7 @@ This program creates a local server using ServeMux as a file server and handler 
 A PostgreSQL database is then used to store game data.
 All art assets were created by myself.
 
-This was my "Capstone Project" for the Boot.dev back-end developers course. I wanted to create a fun little game that would pull together web server handling, database interfacing, and my own artistic ability into a fun web app.
+I wanted to create a fun little game that would pull together web server handling, database interfacing, and my own artistic ability into a fun web app in the Go language.
 
 ## Installation & Setup
 
