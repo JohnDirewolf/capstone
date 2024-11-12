@@ -1,4 +1,4 @@
-# Boot.dev Capstone Project
+# Hatrock Dungeon Explorer!
 
 ## Description
 This is an example of Go programming a server and database driven program as a very simple fantasy web based game. 
@@ -6,7 +6,8 @@ In the game you explore the "Hatrock Dungeon" finding a magic key and a magic sw
 This program creates a local server using ServeMux as a file server and handler for game actions.
 A PostgreSQL database is then used to store game data.
 All art assets were created by myself.
-This is my Capstone Project for the Boot.dev back-end developers course.
+
+This was my "Capstone Project" for the Boot.dev back-end developers course. I wanted to create a fun little game that would pull together web server handling, database interfacing, and my own artistic ability into a fun web app.
 
 ## Installation & Setup
 
@@ -92,3 +93,13 @@ Example format explanation:
    ```bash
    goose -dir sql/schema ppostgres://<username>:<password>@<host>:<port>/game_database up
    ```
+## Usage
+
+After starting the app you open a browser to your localhost. There you will see the opening page. It gives the title and some lore. When reading just click start.
+You will find your avatar in the first room of the dungeon maze, the little adventurer icon.
+To the right of the maze board you will see a navagation compass, your inventory, and a basic room description.
+Click on any of the green compass arrows to move in the maze. New rooms will be revealed.
+You will find a locked door and a mean goblin blocking you path, you must find the key and sword.
+When you enter a room if there is an action to take you will see it above the description.
+Be careful with the goblin! If you don't have the sword it may end your adventure!.
+Find the final room, get your treasure and leave the dungeon!
