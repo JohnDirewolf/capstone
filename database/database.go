@@ -8,12 +8,14 @@ import (
 	"github.com/JohnDirewolf/hatrock_dungeon/shared/types"
 
 	"github.com/joho/godotenv"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
 var dbURL string
 
-const dbURLSuffix string = "/game_database?sslmode=disable"
+const databaseName string = "/game_database"
+const sslString = "?sslmode=disable"
 
 var heart *sql.DB
 
@@ -24,9 +26,9 @@ func Init() error {
 
 	//Get the database connection string from .env
 	godotenv.Load()
-	dbURL := os.Getenv("DB_URL")
+	dbURL = os.Getenv("DB_URL")
 
-	heart, err = sql.Open("postgres", dbURL+dbURLSuffix)
+	heart, err = sql.Open("postgres", dbURL+databaseName+sslString)
 	if err != nil {
 		log.Printf("Database, Init: Error in connecting to database: %v", err)
 		return err
@@ -36,10 +38,78 @@ func Init() error {
 	err = heart.Ping()
 	if err != nil {
 		heart.Close()
-		log.Printf("Database, Init: Failed to ping database: %v", err)
-		return err
+		//Check if we have an error that the database does not exist, if so create it and then the tables. Else log error
+		if pqErr, ok := err.(*pq.Error); ok {
+			if pqErr.Code == "3D000" {
+				heart, err = sql.Open("postgres", dbURL+"/postgres"+sslString)
+				_, err = heart.Exec(`CREATE DATABASE game_database;`)
+				if err != nil {
+					log.Printf("Database, Init: Error creating database: %v", err)
+					heart.Close()
+					return err
+				}
+				//Try one more connection to database as it should exist now.
+				heart, err = sql.Open("postgres", dbURL+databaseName+sslString)
+				if err != nil {
+					log.Printf("Database, Init: Error in connecting to database after database creation: %v", err)
+					return err
+				}
+				//Create our tables in the newly created database.
+				err = createTables()
+			}
+		}
 	}
 	return nil
+}
+
+func createTables() error {
+	_, err := heart.Exec(`CREATE TABLE rooms (
+    						id INTEGER PRIMARY KEY,
+    						title TEXT NOT NULL DEFAULT 'Maze Runner!',
+    						description TEXT NOT NULL DEFAULT 'No Description Provided',
+    						discovered BOOLEAN NOT NULL DEFAULT false);`)
+	if err != nil {
+		log.Printf("Database, createTables: Error creating rooms table: %v", err)
+	}
+	_, err = heart.Exec(`CREATE TABLE items (
+    						id INTEGER PRIMARY KEY,
+    						name TEXT NOT NULL DEFAULT 'Item Name',
+    						article TEXT NOT NULL DEFAULT 'an ',
+    						description TEXT NOT NULL DEFAULT 'A Mysterious Object',
+    						type TEXT NOT NULL DEFAULT 'item',
+    						cur_location INTEGER,
+    						FOREIGN KEY (cur_location) REFERENCES rooms(id));`)
+	if err != nil {
+		log.Printf("Database, createTables: Error creating items table: %v", err)
+	}
+	_, err = heart.Exec(`CREATE TABLE doors (
+    					id INTEGER PRIMARY KEY,
+    					room_id INTEGER NOT NULL, 
+    					direction TEXT CHECK (direction IN ('north', 'south', 'west', 'east')),
+    					locked BOOLEAN NOT NULL DEFAULT false,
+    					guarded BOOLEAN NOT NULL DEFAULT false,
+    					key_id INTEGER NULL,  
+    					FOREIGN KEY (room_id) REFERENCES rooms(id),
+    					FOREIGN KEY (key_id) REFERENCES items(id));`)
+	if err != nil {
+		log.Printf("Database, createTables: Error creating doors table: %v", err)
+	}
+	_, err = heart.Exec(`CREATE TABLE creatures (
+    					id INTEGER PRIMARY KEY,
+    					name TEXT NOT NULL DEFAULT 'Tim',
+    					type TEXT NOT NULL DEFAULT 'Enchanter',
+    					description TEXT NOT NULL DEFAULT 'Ni',
+    					is_alive BOOLEAN NOT NULL DEFAULT true,
+    					vanquished_by INTEGER NULL,
+    					cur_location INTEGER,
+    					guards INTEGER NULL,
+    					FOREIGN KEY (vanquished_by) REFERENCES items(id),
+    					FOREIGN KEY (cur_location) REFERENCES rooms(id),
+    					FOREIGN KEY (guards) REFERENCES doors(id));`)
+	if err != nil {
+		log.Printf("Database, createTables: Error creating creatures table: %v", err)
+	}
+	return err
 }
 
 func Clear() error {
