@@ -73,3 +73,7 @@ You will find a locked door and a mean goblin blocking you path, you must find t
 When you enter a room if there is an action to take you will see it above the description.
 Be careful with the goblin! If you don't have the sword it may end your adventure!.
 Find the final room, get your treasure and leave the dungeon!
+
+## Contributing
+
+If you run Hatrock Dungeon Explorer and would like to share feedback, please open an issue on GitHub: [Hatrock Dungeon Explorer Issues](https://github.com/JohnDirewolf/hatrock/issues)
