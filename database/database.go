@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/JohnDirewolf/capstone/shared/types"
+	"github.com/JohnDirewolf/hatrock_dungeon/shared/types"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"

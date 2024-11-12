@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/JohnDirewolf/capstone/database"
-	"github.com/JohnDirewolf/capstone/handler"
+	"github.com/JohnDirewolf/hatrock_dungeon/database"
+	"github.com/JohnDirewolf/hatrock_dungeon/handler"
 )
 
 func main() {

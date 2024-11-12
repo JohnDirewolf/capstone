@@ -1,4 +1,4 @@
-module github.com/JohnDirewolf/capstone
+module github.com/JohnDirewolf/hatrock_dungeon
 
 go 1.23.2
 

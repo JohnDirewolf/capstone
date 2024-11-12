@@ -8,8 +8,8 @@ import (
 
 	//"strings"
 
-	"github.com/JohnDirewolf/capstone/maze"
-	"github.com/JohnDirewolf/capstone/shared/types"
+	"github.com/JohnDirewolf/hatrock_dungeon/maze"
+	"github.com/JohnDirewolf/hatrock_dungeon/shared/types"
 )
 
 // HANDLERS

@@ -9,8 +9,8 @@ import (
 
 	"database/sql"
 
-	"github.com/JohnDirewolf/capstone/database"
-	"github.com/JohnDirewolf/capstone/shared/types"
+	"github.com/JohnDirewolf/hatrock_dungeon/database"
+	"github.com/JohnDirewolf/hatrock_dungeon/shared/types"
 )
 
 // Global variables
