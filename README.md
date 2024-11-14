@@ -1,7 +1,7 @@
 # Hatrock Dungeon Explorer!
 
 ## Description
-This is an example of Go programming a server and database driven program as a very simple fantasy web based game. 
+This is a very simple fantasy web based game using Go programming to create a local web server and database driven back-end. 
 In the game you explore the "Hatrock Dungeon" finding a magic key and a magic sword to defeat a goblin and escape the dungeon's maze. 
 This program creates a local server using ServeMux as a file server and handler for game actions.
 A PostgreSQL database is then used to store game data.
