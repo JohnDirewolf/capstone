@@ -18,7 +18,7 @@ I wanted to create a fun little game that would pull together web server handlin
 1. Clone the repository:
    ```bash
    git clone https://github.com/JohnDirewolf/hatrock
-   cd capstone
+   cd hatrock
    ```
 
 2. Install PostgreSQL 14.13 if needed.
