@@ -17,7 +17,7 @@ I wanted to create a fun little game that would pull together web server handlin
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/JohnDirewolf/capstone
+   git clone https://github.com/JohnDirewolf/hatrock
    cd capstone
    ```
 
